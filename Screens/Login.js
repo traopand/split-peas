@@ -1,7 +1,13 @@
+Login;
+
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Input } from "react-native-elements";
+import { signIn } from "../API/firebaseMethods";
+
 import {
   StyleSheet,
   Button,
@@ -10,6 +16,8 @@ import {
   View,
   Image,
   TextInput,
+  ScrollView,
+  Alert,
 } from "react-native";
 import Logo from "../assets/Logo.png";
 import { BorderlessButton } from "react-native-gesture-handler";
@@ -18,41 +26,62 @@ export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const handlePress = () => {
+    if (!email) {
+      Alert.alert("Email field is required.");
+    }
+
+    if (!password) {
+      Alert.alert("Password field is required.");
+    }
+
+    signIn(email, password);
+    setEmail("");
+    setPassword("");
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Image style={styles.logo} source={Logo} />
-        <Text style={styles.loginText}>Login</Text>
+        <Text style={styles.loginText}>Sign In</Text>
         <Text style={styles.welcomeText}>Welcome back, </Text>
         <Text style={styles.welcomeText}>
           Sign in to continue grocery planning!
         </Text>
       </View>
+      <Input
+        inputContainerStyle={{
+          borderBottomColor: "#C5C5C7",
+          paddingHorizontal: 20,
+        }}
+        style={styles.textInput}
+        placeholder="Email"
+        value={email}
+        onChangeText={(email) => setEmail(email)}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        leftIcon={<Icon name="envelope" size={24} color="#C5C5C7" />}
+      />
 
-      <View style={{ marginLeft: "-70%" }}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Email"
-          onChangeText={(email) => setEmail(email)}
-          defaultValue={email}
-        />
-      </View>
-      <View style={styles.underline}></View>
-
-      <View style={{ flexDirection: "row" }}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Password"
-          onChangeText={(password) => setPassword(password)}
-          defaultValue={password}
-        />
-        <TouchableOpacity>
-          <Text style={styles.forgotPassword}>Forgot password?</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.underline}></View>
+      <Input
+        inputContainerStyle={{
+          borderBottomColor: "#C5C5C7",
+          paddingHorizontal: 25,
+        }}
+        style={styles.textInput}
+        placeholder="Password"
+        value={password}
+        onChangeText={(password) => setPassword(password)}
+        leftIcon={<Icon name="lock" size={30} color="#C5C5C7" />}
+        secureTextEntry={true}
+      />
 
       <TouchableOpacity>
+        <Text style={styles.forgotPassword}>Forgot password?</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handlePress}>
         <View style={styles.button}>
           <Text style={{ color: "white", fontSize: 17 }}>Sign In</Text>
         </View>
@@ -105,7 +134,6 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     fontSize: 18,
     paddingBottom: 10,
-    paddingTop: 30,
     textAlign: "left",
   },
 
@@ -113,9 +141,7 @@ const styles = StyleSheet.create({
     color: "#A4BEAD",
     fontSize: 14,
     fontWeight: "bold",
-    paddingBottom: 10,
-    paddingTop: 30,
-    paddingLeft: "30%",
+    paddingTop: 5,
   },
 
   underline: {

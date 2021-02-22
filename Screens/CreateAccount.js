@@ -1,8 +1,12 @@
-import "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+//import { AuthContext } from "../Navigation/AuthProvider";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Input } from "react-native-elements";
+import { registration } from "../API/firebaseMethods";
+
 import {
   StyleSheet,
   Button,
@@ -11,64 +15,132 @@ import {
   View,
   Image,
   TextInput,
+  ScrollView,
+  Keyboard,
+  Alert,
 } from "react-native";
 import Logo from "../assets/Logo.png";
 import { BorderlessButton } from "react-native-gesture-handler";
 
 export default function CreateAccount({ navigation }) {
-  const [username, setUsername] = useState("");
+  const [userName, setUserName] = useState("");
+  const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const emptyState = () => {
+    setFirstName("");
+    setUserName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  const handlePress = () => {
+    if (!firstName) {
+      Alert.alert("First name is required");
+    } else if (!userName) {
+      Alert.alert("Username is required.");
+    } else if (!email) {
+      Alert.alert("Email field is required.");
+    } else if (!password) {
+      Alert.alert("Password field is required.");
+    } else if (!confirmPassword) {
+      setPassword("");
+      Alert.alert("Confirm password field is required.");
+    } else if (password !== confirmPassword) {
+      Alert.alert("Password does not match!");
+    } else {
+      registration(email, password, userName, firstName);
+      navigation.navigate("Loading");
+      emptyState();
+    }
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Image style={styles.logo} source={Logo} />
         <Text style={styles.loginText}>Create Account</Text>
-        <Text style={styles.welcomeText}>Enter your details to begin! </Text>
+        <Text style={styles.welcomeText}>Enter your details to begin!</Text>
       </View>
+      <ScrollView onBlur={Keyboard.dismiss}>
+        <Input
+          inputContainerStyle={{
+            borderBottomColor: "#C5C5C7",
+            paddingHorizontal: 20,
+          }}
+          style={styles.textInput}
+          placeholder="First Name"
+          value={firstName}
+          onChangeText={(firstName) => setFirstName(firstName)}
+          leftIcon={<Icon name="user" size={26} color="#C5C5C7" />}
+        />
 
-      <View style={{ marginLeft: "-61%" }}>
-        <TextInput
+        <Input
+          inputContainerStyle={{
+            borderBottomColor: "#C5C5C7",
+            paddingHorizontal: 20,
+          }}
           style={styles.textInput}
           placeholder="Username"
-          onChangeText={(username) => setUsername(username)}
-          defaultValue={username}
+          value={userName}
+          onChangeText={(userName) => setUserName(userName)}
+          leftIcon={<Icon name="user" size={26} color="#C5C5C7" />}
         />
-      </View>
-      <View style={styles.underline}></View>
 
-      <View style={{ marginLeft: "-70%" }}>
-        <TextInput
+        <Input
+          inputContainerStyle={{
+            borderBottomColor: "#C5C5C7",
+            paddingHorizontal: 20,
+          }}
           style={styles.textInput}
           placeholder="Email"
+          autoCapitalize="none"
+          value={email}
           onChangeText={(email) => setEmail(email)}
-          defaultValue={email}
+          leftIcon={<Icon name="envelope" size={24} color="#C5C5C7" />}
         />
-      </View>
-      <View style={styles.underline}></View>
 
-      <View style={{ marginLeft: "-62%" }}>
-        <TextInput
+        <Input
+          inputContainerStyle={{
+            borderBottomColor: "#C5C5C7",
+            paddingHorizontal: 25,
+          }}
           style={styles.textInput}
           placeholder="Password"
+          value={password}
           onChangeText={(password) => setPassword(password)}
-          defaultValue={password}
+          leftIcon={<Icon name="lock" size={30} color="#C5C5C7" />}
+          secureTextEntry={true}
         />
-      </View>
-      <View style={styles.underline}></View>
 
-      <TouchableOpacity>
-        <View style={styles.button}>
-          <Text style={{ color: "white", fontSize: 17 }}>Create Account</Text>
-        </View>
-      </TouchableOpacity>
-      <View style={{ flexDirection: "row", marginTop: 20 }}>
-        <Text style={styles.lowerText}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.lowerTextPurple}>Sign In</Text>
+        <Input
+          inputContainerStyle={{
+            borderBottomColor: "#C5C5C7",
+            paddingHorizontal: 25,
+          }}
+          style={styles.textInput}
+          placeholder="Retype your password to confirm*"
+          value={confirmPassword}
+          onChangeText={(password2) => setConfirmPassword(password2)}
+          leftIcon={<Icon name="lock" size={30} color="#C5C5C7" />}
+          secureTextEntry={true}
+        />
+
+        <TouchableOpacity onPress={handlePress}>
+          <View style={styles.button}>
+            <Text style={{ color: "white", fontSize: 17 }}>Create Account</Text>
+          </View>
         </TouchableOpacity>
-      </View>
+        <View style={{ flexDirection: "row", marginTop: 20 }}>
+          <Text style={styles.lowerText}>Already have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.lowerTextPurple}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
       <StatusBar style="auto" />
     </View>
   );
@@ -80,7 +152,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -100,
+    paddingTop: 40,
   },
 
   titleContainer: {
@@ -90,8 +162,8 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: 180,
-    height: 215,
+    width: 144,
+    height: 172,
   },
 
   loginText: {
@@ -109,9 +181,8 @@ const styles = StyleSheet.create({
 
   textInput: {
     paddingTop: 10,
-    fontSize: 18,
+    fontSize: 15,
     paddingBottom: 10,
-    paddingTop: 30,
     textAlign: "left",
   },
 
@@ -119,9 +190,7 @@ const styles = StyleSheet.create({
     color: "#A4BEAD",
     fontSize: 14,
     fontWeight: "bold",
-    paddingBottom: 10,
-    paddingTop: 30,
-    paddingLeft: "30%",
+    paddingTop: 5,
   },
 
   underline: {
@@ -134,7 +203,7 @@ const styles = StyleSheet.create({
 
   button: {
     backgroundColor: "#B4B7FF",
-    marginTop: 70,
+    marginTop: 40,
     width: 343,
     height: 56,
     borderRadius: 14,
