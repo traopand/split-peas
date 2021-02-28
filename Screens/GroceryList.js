@@ -100,19 +100,18 @@ export default function GroceryList({ navigation }) {
 
             <Image style={styles.logo} source={Logo} />
 
+            { /* Grocery List Name */}
             <Text style={styles.h1}>{groceryItemName}</Text>
             <Text style={styles.shopper}>Shopper: Kathy Cao</Text>
-           
-           {/* name is currently hardcoded!*/}
+           {/* Shopper name is currently hardcoded!*/}
 
             {/* Table headings*/}
-            <View style={{ flexDirection: 'row',  justifyContent: 'center'}}>
+            <View style={styles.tableHeadings}>
                 <Text style={styles.h2}>Item</Text>
-                <Text style={styles.h2}>Quantity</Text>
-                <Text style={styles.h2}>Added By</Text>
+                <Text style={[styles.h2, styles.h2mid]}>Quantity</Text>
+                <Text style={[styles.h2, styles.h2right]}>Added By</Text>
             </View>
             
-            {/* name is currently hardcoded!*/}
             <FlatList
                 style={{ flex: 1 }}
                 data={groceryList}
@@ -129,7 +128,6 @@ export default function GroceryList({ navigation }) {
                         <Text style={styles.p}>Claim Items</Text>
                 </Button>
             </View>
-            
         </View>
     );
 }
@@ -137,24 +135,31 @@ export default function GroceryList({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        
         backgroundColor: '#fff',
-        // alignItems: 'stretch',
         justifyContent: 'center',
         padding: 30,
     },
     h1: {
-        marginBottom: '5%',
+        marginTop: '7%',
+        marginBottom: '10%',
         fontSize: 20,
         color: '#5C7F7B',
         fontWeight: 'bold',
+        textAlign: 'center',
     },
     h2: {
         flex: 1,
-        marginTop: '10%',
+        marginTop: '6%',
+        marginBottom: '3%',
         fontSize: 15,
         color: '#5C7F7B',
         fontWeight: 'bold',
+    },
+    h2mid: {
+        textAlign: 'center',
+    },
+    h2right: {
+        textAlign: 'right',
     },
     p:{
         color: '#fff',
@@ -171,8 +176,14 @@ const styles = StyleSheet.create({
     },
     logo: {
         alignSelf: 'center',
-        width: 170,
-        height: 215,
+        width: 100,
+        height: 90,
         margin: 0,
+    },
+    tableHeadings:{
+        flexDirection: 'row', 
+        justifyContent: "space-between",
+        alignItems: "center",
+        alignContent: 'space-between',
     },
 })
