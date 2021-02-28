@@ -1,10 +1,10 @@
 import React from 'react';
 import * as firebase from "firebase";
 import { List } from 'react-native-paper';
-import { Text } from 'react-native';
-
+import { StyleSheet, Text, View } from 'react-native';
 
 function GroceryItem({ id, itemName, quantity, addedBy}) {
+  
 
   async function updateInfo() {
     await firebase.firestore()
@@ -19,17 +19,34 @@ function GroceryItem({ id, itemName, quantity, addedBy}) {
 
   return (
     <List.Item
-      title={itemName}
+      style={styles.listItem}
+      title={quantity}
       onPress={() => updateInfo()}
-      description={addedBy}
-      // left={props => (
-      //   <List.Icon {...props} icon={quantity} />
-      // )}
       left={props => (
-          <Text>{quantity}</Text>
+        <View style={styles.view}>
+          <Text style={styles.text}>{itemName}</Text>
+        </View>
+      )}
+      right={props => (
+          <Text style={styles.addedBy}>{addedBy}</Text>
         )}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  view:{
+    width: '47%',
+  },
+  text: {
+     paddingTop: '3%',
+  },
+  addedBy:{
+    paddingTop: '2%',
+  },
+  listItem:{
+    padding: 0,
+  }
+})
 
 export default React.memo(GroceryItem);
