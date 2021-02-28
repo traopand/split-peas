@@ -84,7 +84,6 @@ export default function GroceryList({ navigation }) {
     }
 
     const handleDashboard = () => {
-        loggingOut();
         navigation.replace("Dashboard");
       };
 
@@ -144,7 +143,7 @@ const styles = StyleSheet.create({
         padding: 30,
     },
     h1: {
-        marginVertical: '5%',
+        marginBottom: '5%',
         fontSize: 20,
         color: '#5C7F7B',
         fontWeight: 'bold',
@@ -171,9 +170,8 @@ const styles = StyleSheet.create({
     },
     logo: {
         alignSelf: 'center',
-        // borderColor:'brown',
-        // borderWidth: 1,
         width: 170,
         height: 215,
+        margin: 0,
     },
 })
