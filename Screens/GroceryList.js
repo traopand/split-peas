@@ -8,7 +8,7 @@ import Logo from "../assets/Logo.png";
 
 export default function GroceryList({ navigation }) {
     let currentUserUID = firebase.auth().currentUser.uid;
-    const [firstName, setFirstName] = useState("Amanda");
+    const [firstName, setFirstName] = useState("No one");
 
     const [groceryItem, setGroceryItem] = useState('');
     // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
@@ -21,21 +21,21 @@ export default function GroceryList({ navigation }) {
 
     useEffect(() => {
 
-        // async function getUserInfo() {
-        //     let doc = await firebase
-        //       .firestore()
-        //       .collection("usersList")
-        //       .doc(currentUserUID)
-        //       .get();
+        async function getUserInfo() {
+            let doc = await firebase
+              .firestore()
+              .collection("usersList")
+              .doc(currentUserUID)
+              .get();
       
-        //     if (!doc.exists) {
-        //       Alert.alert("No user data found!");
-        //     } else {
-        //       let dataObj = doc.data();
-        //       setFirstName(dataObj.firstName);
-        //     }
-        //   }
-        //   getUserInfo();
+            if (!doc.exists) {
+              Alert.alert("No user data found!");
+            } else {
+              let dataObj = doc.data();
+              setFirstName(dataObj.firstName);
+            }
+          }
+          getUserInfo();
           
         async function getGroupInfo() {
             let doc = await firebase

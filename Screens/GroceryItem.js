@@ -22,10 +22,7 @@ function GroceryItem({ id, itemName, quantity, addedBy}) {
       title={itemName}
       onPress={() => updateInfo()}
       description={addedBy}
-      // left={props => (
-      //   <List.Icon {...props} icon={quantity} />
-      // )}
-      left={props => (
+      right={props => (
           <Text>{quantity}</Text>
         )}
     />
