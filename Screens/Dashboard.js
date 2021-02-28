@@ -26,16 +26,25 @@ export default function Dashboard({ navigation }) {
     getUserInfo();
   });
 
-  const handlePress = () => {
+  const logout = () => {
     loggingOut();
     navigation.replace("Login");
+  };
+
+  const gotoGroceryList = () => {
+    navigation.replace("GroceryList");
   };
 
   return (
     <View style={styles.container}>
       <Text>Dashboard</Text>
       <Text>Hi {firstName}</Text>
-      <TouchableOpacity style={styles.button} onPress={handlePress}>
+
+      <TouchableOpacity style={styles.button} onPress={gotoGroceryList}>
+        <Text style={styles.logout}>Go to List</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={logout}>
         <Text style={styles.logout}>Log Out</Text>
       </TouchableOpacity>
     </View>

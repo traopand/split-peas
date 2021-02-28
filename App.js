@@ -11,7 +11,7 @@ import CreateAccount from "./Screens/CreateAccount";
 import Loading from "./Screens/Loading";
 import Dashboard from "./Screens/Dashboard";
 import Main from "./Screens/Main";
-import Todos from "./Screens/Todos";
+import GroceryList from "./Screens/GroceryList";
 
 const Stack = createStackNavigator();
 
@@ -33,7 +33,7 @@ function App() {
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name={"Dashboard"} component={Dashboard} />
         <Stack.Screen name={"Main"} component={Main} />
-        <Stack.Screen name={"Todos"} component={Todos} />
+        <Stack.Screen name={"GroceryList"} component={GroceryList} />
       </Stack.Navigator>
     </NavigationContainer>
   );

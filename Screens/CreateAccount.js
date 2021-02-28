@@ -7,18 +7,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import { registration } from "../API/firebaseMethods";
 
-import {
-  StyleSheet,
-  Button,
-  TouchableOpacity,
-  Text,
-  View,
-  Image,
-  TextInput,
-  ScrollView,
-  Keyboard,
-  Alert,
-} from "react-native";
+import { StyleSheet, Button, TouchableOpacity, Text, View, Image, TextInput,
+  ScrollView, Keyboard, Alert } from "react-native";
 import Logo from "../assets/Logo.png";
 import { BorderlessButton } from "react-native-gesture-handler";
 

@@ -1,30 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, FlatList, View, Text } from 'react-native';
-import Todo from './Todo';
+import { StyleSheet, FlatList, View, Text , Alert,  Image } from 'react-native';
+import GroceryItem from './GroceryItem';
 
 import * as firebase from "firebase";
 import { Appbar, Button, TextInput } from 'react-native-paper';
+import Logo from "../assets/Logo.png";
 
-export default function Todos() {
+export default function GroceryList({ navigation }) {
+    let currentUserUID = firebase.auth().currentUser.uid;
+    const [firstName, setFirstName] = useState("Amanda");
 
-    const [todo, setTodo] = useState('');
+    const [groceryItem, setGroceryItem] = useState('');
     // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
     const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
-    
 
-    // creating reference to grocery list
-    // const groceryListRef = firebase.firestore().collection("groceryList").doc("UMa1GQigE73aEWGC9dUM");
-    // groceryListRef.get().then((doc) => {
-    //     groceryListData = doc.data();
-    // })
-    // const groceryListData = "";
-
-    const [groceryListName, setGroceryListName] = useState("");
+    const [groceryItemName, setGroceryItemName] = useState("");
 
     const [loading, setLoading] = useState(true);
-    const [todos, setTodos] = useState([]);
+    const [groceryList, setGroceryList] = useState([]);
 
     useEffect(() => {
+
+        // async function getUserInfo() {
+        //     let doc = await firebase
+        //       .firestore()
+        //       .collection("usersList")
+        //       .doc(currentUserUID)
+        //       .get();
+      
+        //     if (!doc.exists) {
+        //       Alert.alert("No user data found!");
+        //     } else {
+        //       let dataObj = doc.data();
+        //       setFirstName(dataObj.firstName);
+        //     }
+        //   }
+        //   getUserInfo();
+          
         async function getGroupInfo() {
             let doc = await firebase
               .firestore()
@@ -37,7 +49,7 @@ export default function Todos() {
               Alert.alert("No grocery list name found!");
             } else {
               let dataObj = doc.data();
-              setGroceryListName(dataObj.groceryListName);
+              setGroceryItemName(dataObj.groceryListName);
             }
           }
           getGroupInfo();
@@ -45,15 +57,16 @@ export default function Todos() {
         return ref.onSnapshot(querySnapshot => {
             const list = [];
             querySnapshot.forEach(doc => {
-                const { title, complete } = doc.data();
+                const { itemName, quantity, addedBy} = doc.data();
                 list.push({
                     id: doc.id,
-                    title,
-                    complete,
+                    itemName,
+                    quantity,
+                    addedBy,
                 });
             });
 
-            setTodos(list);
+            setGroceryList(list);
 
             if (loading) {
                 setLoading(false);
@@ -61,20 +74,33 @@ export default function Todos() {
         });
     }, []);
 
-    async function addTodo() {
+    async function addGroceryItem() {
         await ref.add({
-            title: todo,
-            complete: false,
+            itemName: groceryItem,
+            quantity: 0,
+            addedBy: firstName,
         });
-        setTodo('');
+        setGroceryItem('');
     }
+
+    const handleDashboard = () => {
+        loggingOut();
+        navigation.replace("Dashboard");
+      };
 
     if (loading) {
         return null; // or a spinner
     }
     return (
         <View style={styles.container}>
-            <Text style={styles.h1}>{groceryListName}</Text>
+
+            <Button onPress={() => handleDashboard()}>
+                <Text>Back</Text>
+            </Button>
+
+            <Image style={styles.logo} source={Logo} />
+
+            <Text style={styles.h1}>{groceryItemName}</Text>
             <Text style={styles.shopper}>Shopper: Kathy Cao</Text>
            
            {/* name is currently hardcoded!*/}
@@ -89,17 +115,17 @@ export default function Todos() {
             {/* name is currently hardcoded!*/}
             <FlatList
                 style={{ flex: 1 }}
-                data={todos}
+                data={groceryList}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <Todo {...item} />}
+                renderItem={({ item }) => <GroceryItem {...item} />}
             />
-            <TextInput label={'New Item'} value={todo} onChangeText={setTodo} />
+            <TextInput label={'New Item'} value={groceryItem} onChangeText={setGroceryItem} />
            
             <View style={{ flexDirection: 'row', marginHorizontal: -5}}>
-                <Button onPress={() => addTodo()} style={styles.button}>
+                <Button onPress={() => addGroceryItem()} style={styles.button}>
                         <Text style={styles.p}>Add Item +</Text>
                 </Button>
-                <Button onPress={() => addTodo()} style={styles.button}>
+                <Button onPress={() => addGroceryItem()} style={styles.button}>
                         <Text style={styles.p}>Claim Items</Text>
                 </Button>
             </View>
@@ -142,5 +168,12 @@ const styles = StyleSheet.create({
         marginTop: '10%',
         marginHorizontal: 5,
         backgroundColor: '#B4B7FF',   
-    }
+    },
+    logo: {
+        alignSelf: 'center',
+        // borderColor:'brown',
+        // borderWidth: 1,
+        width: 170,
+        height: 215,
+    },
 })
