@@ -10,6 +10,8 @@ import Login from "./Screens/Login";
 import CreateAccount from "./Screens/CreateAccount";
 import Loading from "./Screens/Loading";
 import Dashboard from "./Screens/Dashboard";
+import Main from "./Screens/Main";
+import Todos from "./Screens/Todos";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +32,8 @@ function App() {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name={"Dashboard"} component={Dashboard} />
+        <Stack.Screen name={"Main"} component={Main} />
+        <Stack.Screen name={"Todos"} component={Todos} />
       </Stack.Navigator>
     </NavigationContainer>
   );
