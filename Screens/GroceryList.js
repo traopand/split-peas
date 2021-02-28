@@ -7,17 +7,15 @@ import { Appbar, Button, TextInput } from 'react-native-paper';
 import Logo from "../assets/Logo.png";
 
 export default function GroceryList({ navigation }) {
-    let currentUserUID = firebase.auth().currentUser.uid;
-    const [firstName, setFirstName] = useState("No one");
-
-    const [groceryItem, setGroceryItem] = useState('');
-    // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
     const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
-
+    const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection").orderBy('createdAt');
+    
+    let currentUserUID = firebase.auth().currentUser.uid;
+    const [firstName, setFirstName] = useState("");
+    const [groceryItem, setGroceryItem] = useState('');
     const [groceryItemName, setGroceryItemName] = useState("");
-
-    const [loading, setLoading] = useState(true);
     const [groceryList, setGroceryList] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
@@ -54,17 +52,19 @@ export default function GroceryList({ navigation }) {
           }
           getGroupInfo();
 
-        return ref.onSnapshot(querySnapshot => {
+        return query.onSnapshot(querySnapshot => {
             const list = [];
             querySnapshot.forEach(doc => {
-                const { itemName, quantity, addedBy} = doc.data();
+                const { itemName, quantity, addedBy, createdAt} = doc.data();
+                const item = doc.data();
                 list.push({
                     id: doc.id,
                     itemName,
                     quantity,
                     addedBy,
+                    createdAt,
                 });
-            });
+            })
 
             setGroceryList(list);
 
@@ -79,6 +79,7 @@ export default function GroceryList({ navigation }) {
             itemName: groceryItem,
             quantity: 0,
             addedBy: firstName,
+            createdAt: firebase.firestore.Timestamp.fromDate(new Date()).toDate(),
         });
         setGroceryItem('');
     }
