@@ -101,6 +101,8 @@ export default function Dashboard({ navigation }) {
         }}
       >
         <View style={styles.centeredView}>
+
+          {/* The popuup */}
           <View style={styles.modalView}>
             <Input
               inputContainerStyle={{
@@ -112,7 +114,7 @@ export default function Dashboard({ navigation }) {
               style={styles.listName}
             ></Input>
 
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row"}}>
               <Text style={styles.evenSplit}>Even Split Mode </Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#B4B7FF" }}
@@ -132,6 +134,7 @@ export default function Dashboard({ navigation }) {
             >
               <Text style={styles.textStyle}>Close</Text>
             </Pressable>
+
           </View>
         </View>
       </Modal>
@@ -281,11 +284,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: "#000",
     width: "90%",
-    height: "40%",
+    height: "50%",
     shadowOffset: {
       width: 0,
       height: 2,
     },
+
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
