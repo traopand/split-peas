@@ -1,21 +1,13 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  FlatList,
-  View,
-  Text,
-  Alert,
-  Image,
-  TouchableOpacity,
-} from "react-native";
-import GroceryItem from "./GroceryItem";
+import { StyleSheet, FlatList, View, Text, Alert, Image, TouchableOpacity } from "react-native";
+import GroceryItemSplitBill from "./GroceryItemSplitBill";
 import { Input } from "react-native-elements";
 import * as firebase from "firebase";
-import { Appbar, Button, TextInput } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import Logo from "../assets/Logo.png";
 import LeftArrow from "../assets/left-arrow.png";
 
-export default function GroceryList({ navigation }) {
+export default function GroceryListSplitBill({ navigation }) {
   let currentUserUID = firebase.auth().currentUser.uid;
   const [firstName, setFirstName] = useState("Amanda");
 
@@ -117,13 +109,8 @@ export default function GroceryList({ navigation }) {
   }
 
   const handleDashboard = () => {
-    navigation.replace("Dashboard");
+    navigation.replace("GroceryList");
   };
-
-  const gotoClaimItems = () => {
-    navigation.replace("GroceryListSplitBill");
-  };
-  
 
   if (loading) {
     return null; // or a spinner
@@ -152,6 +139,7 @@ export default function GroceryList({ navigation }) {
         value={groceryItemName}
       ></TouchableOpacity>
 
+      <Text style={styles.shopperText}>Even Split</Text>
       <Text style={styles.shopperText}>Shopper: Kathy Cao</Text>
 
       {/* name is currently hardcoded!*/}
@@ -160,7 +148,7 @@ export default function GroceryList({ navigation }) {
       <View style={{ flexDirection: "row", justifyContent: "center" }}>
         <Text style={[styles.h2, styles.h2left]}>Item</Text>
         <Text style={styles.h2}>Quantity</Text>
-        <Text style={[styles.h2, styles.h2right]}>Added By</Text>
+        <Text style={[styles.h2, styles.h2right]}>Claim</Text>
       </View>
 
       {/* name is currently hardcoded!*/}
@@ -168,28 +156,15 @@ export default function GroceryList({ navigation }) {
         style={{ flex: 1 }}
         data={groceryList}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <GroceryItem {...item} />}
+        renderItem={({ item }) => <GroceryItemSplitBill {...item} />}
       />
-      <TextInput
-        label={"New Item"}
-        value={groceryItem}
-        onChangeText={setGroceryItem}
-      />
-
-      <View style={{ flexDirection: "row", marginHorizontal: -20 }}>
 
         <Button onPress={() => addGroceryItem()} style={styles.button}>
-          <Text style={styles.p}>Add Item +</Text>
+          <Text style={styles.p}>Split Bill</Text>
         </Button>
-        <Button onPress={() => gotoClaimItems()} style={styles.button}>
-          <Text style={styles.p}>Claim Items</Text>
-        </Button>
-
-      </View>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -229,10 +204,9 @@ const styles = StyleSheet.create({
 
   // buttons
   button: {
-    flex: 1,
     marginTop: "10%",
     paddingVertical: 10,
-    marginHorizontal: 20,
+    marginHorizontal: 60,
     backgroundColor: "#B4B7FF",
   },
   backButton:{

@@ -6,8 +6,7 @@ import T from "../assets/T.png";
 import A from "../assets/A.png";
 import Z from "../assets/Z.png";
 
-function GroceryItem({ id, itemName, quantity, addedBy }) {
-
+function GroceryItemSplitBill({ id, itemName, quantity, addedBy }) {
 
   async function updateInfo() {
     await firebase.firestore()
@@ -30,7 +29,6 @@ function GroceryItem({ id, itemName, quantity, addedBy }) {
           <Text style={styles.text}>{itemName}</Text>
         </View>
       )}
-
       right={props => (
         <View style={styles.addedBy}>
           {addedBy === 'Amanda' ? <Image source={A} />
@@ -56,11 +54,11 @@ const styles = StyleSheet.create({
     paddingTop: '3%',
   },
   addedBy: {
-    marginTop: '2%',
+    paddingTop: '2%',
   },
   listItem: {
     padding: 0,
   }
 })
 
-export default React.memo(GroceryItem);
+export default React.memo(GroceryItemSplitBill);

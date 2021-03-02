@@ -1,7 +1,6 @@
 // In App.js in a new project
 
 import React from "react";
-import { View, Text, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as firebase from "firebase";
@@ -12,6 +11,7 @@ import Loading from "./Screens/Loading";
 import Dashboard from "./Screens/Dashboard";
 import Main from "./Screens/Main";
 import GroceryList from "./Screens/GroceryList";
+import GroceryListSplitBill from "./Screens/GroceryListSplitBill";
 
 const Stack = createStackNavigator();
 
@@ -23,17 +23,16 @@ function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}
-      >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+
         <Stack.Screen name={"Loading"} component={Loading} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name={"Dashboard"} component={Dashboard} />
         <Stack.Screen name={"Main"} component={Main} />
         <Stack.Screen name={"GroceryList"} component={GroceryList} />
+        <Stack.Screen name={"GroceryListSplitBill"} component={GroceryListSplitBill} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
