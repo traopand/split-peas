@@ -39,8 +39,9 @@ function GroceryItem({ id, itemName, quantity, addedBy }) {
           {addedBy === 'Tara' ? <Image source={T} />
             : null}
 
-          {addedBy !== 'Tara' || addedBy !== 'Amanda' ? <Image source={Z} />
-            : null}
+          {addedBy !== 'Tara' || addedBy !== 'Amanda' ? null
+            : <Image source={Z} />
+          }
 
         </View>
       )}

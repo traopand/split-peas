@@ -7,12 +7,23 @@ export async function registration(email, password, userName, firstName) {
     await firebase.auth().createUserWithEmailAndPassword(email, password);
     const currentUser = firebase.auth().currentUser;
 
+    // automatically adds all users to the same group
+    const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u/usersCollection");
+    await groupRef.add({
+      userID: currentUser.uid,
+    });
+    // end of auto add to same group
+    
     const db = firebase.firestore();
     db.collection("usersList").doc(currentUser.uid).set({
       email: currentUser.email,
       userName: userName,
       firstName: firstName,
+      groupID: "Rodaxem1mzuhpqAOq25u",
     });
+
+    
+
   } catch (err) {
     Alert.alert("There is something wrong!!!!", err.message);
   }

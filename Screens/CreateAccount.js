@@ -1,16 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
 //import { AuthContext } from "../Navigation/AuthProvider";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import { registration } from "../API/firebaseMethods";
 
-import { StyleSheet, Button, TouchableOpacity, Text, View, Image, TextInput,
+import { StyleSheet, TouchableOpacity, Text, View, Image,
   ScrollView, Keyboard, Alert } from "react-native";
 import Logo from "../assets/Logo.png";
-import { BorderlessButton } from "react-native-gesture-handler";
 
 export default function CreateAccount({ navigation }) {
   const [userName, setUserName] = useState("");

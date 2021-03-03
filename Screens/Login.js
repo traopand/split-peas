@@ -1,26 +1,20 @@
 Login;
 
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useContext } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import React, { useState} from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input } from "react-native-elements";
 import { signIn } from "../API/firebaseMethods";
 
 import {
   StyleSheet,
-  Button,
   TouchableOpacity,
   Text,
   View,
   Image,
-  TextInput,
-  ScrollView,
   Alert,
 } from "react-native";
 import Logo from "../assets/Logo.png";
-import { BorderlessButton } from "react-native-gesture-handler";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");

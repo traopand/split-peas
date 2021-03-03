@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, FlatList, View, Text, Alert, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, FlatList, View, Text, Alert, Image, TouchableOpacity, Keyboard } from "react-native";
 import GroceryItemSplitBill from "./GroceryItemSplitBill";
 import { Input } from "react-native-elements";
 import * as firebase from "firebase";
@@ -11,11 +11,10 @@ export default function GroceryListSplitBill({ navigation }) {
   let currentUserUID = firebase.auth().currentUser.uid;
   const [firstName, setFirstName] = useState("Amanda");
 
-  const [groceryItem, setGroceryItem] = useState("");
+  const [totalPrice, setTotalPrice] = useState(0);
   // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
-  const ref = firebase
-    .firestore()
-    .collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
+  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
+  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection").orderBy('createdAt');
 
   const [groceryItemName, setGroceryItemName] = useState("");
 
@@ -68,15 +67,16 @@ export default function GroceryListSplitBill({ navigation }) {
       // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
     }
 
-    return ref.onSnapshot((querySnapshot) => {
+    return query.onSnapshot((querySnapshot) => {
       const list = [];
       querySnapshot.forEach((doc) => {
-        const { itemName, quantity, addedBy } = doc.data();
+        const { itemName, quantity, addedBy, createdAt  } = doc.data();
         list.push({
           id: doc.id,
           itemName,
           quantity,
           addedBy,
+          createdAt,
         });
       });
 
@@ -88,13 +88,16 @@ export default function GroceryListSplitBill({ navigation }) {
     });
   }, []);
 
-  async function addGroceryItem() {
-    await ref.add({
-      itemName: groceryItem,
-      quantity: 0,
-      addedBy: firstName,
-    });
-    setGroceryItem("");
+  async function setBillTotal() {
+    await firebase
+      .firestore()
+      .collection("groceryList")
+      .doc("UMa1GQigE73aEWGC9dUM")
+      .update({
+          totalPrice: Number(totalPrice.replace(/[^0-9]/g, '')),
+        });
+        Keyboard.dismiss()
+      // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
   }
 
   //UPDATE LIST NAME:
@@ -159,7 +162,15 @@ export default function GroceryListSplitBill({ navigation }) {
         renderItem={({ item }) => <GroceryItemSplitBill {...item} />}
       />
 
-        <Button onPress={() => addGroceryItem()} style={styles.button}>
+      <TextInput
+        label={"Total Bill"}
+        placeholder= "$"
+        keyboardType='numeric'
+        value={ totalPrice}
+        onChangeText={setTotalPrice}
+      />
+
+        <Button onPress={() => setBillTotal()} style={styles.button}>
           <Text style={styles.p}>Split Bill</Text>
         </Button>
     </View>

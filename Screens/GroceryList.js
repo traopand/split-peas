@@ -7,11 +7,12 @@ import {
   Alert,
   Image,
   TouchableOpacity,
+  Keyboard
 } from "react-native";
 import GroceryItem from "./GroceryItem";
 import { Input } from "react-native-elements";
 import * as firebase from "firebase";
-import { Appbar, Button, TextInput } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import Logo from "../assets/Logo.png";
 import LeftArrow from "../assets/left-arrow.png";
 
@@ -21,9 +22,8 @@ export default function GroceryList({ navigation }) {
 
   const [groceryItem, setGroceryItem] = useState("");
   // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
-  const ref = firebase
-    .firestore()
-    .collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
+  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
+  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection").orderBy('createdAt');
 
   const [groceryItemName, setGroceryItemName] = useState("");
 
@@ -76,15 +76,16 @@ export default function GroceryList({ navigation }) {
       // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
     }
 
-    return ref.onSnapshot((querySnapshot) => {
+    return query.onSnapshot((querySnapshot) => {
       const list = [];
       querySnapshot.forEach((doc) => {
-        const { itemName, quantity, addedBy } = doc.data();
+        const { itemName, quantity, addedBy, createdAt } = doc.data();
         list.push({
           id: doc.id,
           itemName,
           quantity,
           addedBy,
+          createdAt,
         });
       });
 
@@ -101,8 +102,10 @@ export default function GroceryList({ navigation }) {
       itemName: groceryItem,
       quantity: 0,
       addedBy: firstName,
+      createdAt: firebase.firestore.Timestamp.fromDate(new Date()).toDate(),
     });
     setGroceryItem("");
+    Keyboard.dismiss();
   }
 
   //UPDATE LIST NAME:
