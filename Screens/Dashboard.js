@@ -16,15 +16,7 @@ import { loggingOut } from "../API/firebaseMethods";
 import { GiftedChat } from "react-native-gifted-chat";
 import { Input } from "react-native-elements";
 import Logo from "../assets/Logo.png";
-import BillIcon from "../assets/BillIcon.png";
-import GroceryIcon from "../assets/groceryIcon.png";
-import AddMember from "../assets/AddMember.png";
-import Member1 from "../assets/Member1.png";
-import Member2 from "../assets/Member2.png";
-import Member3 from "../assets/Member3.png";
-import Member4 from "../assets/Member4.png";
-import Member5 from "../assets/Member5.png";
-import Member6 from "../assets/Member6.png";
+import LeftArrow from "../assets/left-arrow.png";
 import Rectangle from "../assets/Rectangle.png";
 
 export default function Dashboard({ navigation }) {
@@ -68,10 +60,10 @@ export default function Dashboard({ navigation }) {
     navigation.replace("GroceryList");
   };
 
-  const handlePress = () => {
-    loggingOut();
-    navigation.replace("Login");
+  const gotoHomepage = () => {
+    navigation.replace("Homepage");
   };
+
 
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -88,7 +80,15 @@ export default function Dashboard({ navigation }) {
 
   return (
     <View style={styles.container}>
+      
+      <View style={{ alignSelf: "flex-start"}}>
+      <TouchableOpacity style={styles.backButton} onPress={() => gotoHomepage()}>
+          <Image source={LeftArrow} />
+      </TouchableOpacity>
+      </View>
+
       <Image style={styles.logo} source={Logo} />
+
       <Text style={styles.titleText}>Ravenous Raccoons</Text>
       <Text style={styles.nameText}>Hi {firstName}</Text>
       <Modal
@@ -186,11 +186,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  logo: {
-    width: 144,
-    height: 172,
   },
 
   titleText: {
@@ -329,5 +324,15 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginLeft: 20,
+  },
+
+  backButton:{
+    marginLeft: 20,
+  },
+
+  logo: {
+    alignSelf: "center",
+    width: 80,
+    height: 110,
   },
 });

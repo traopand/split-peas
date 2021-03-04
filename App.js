@@ -12,6 +12,7 @@ import Dashboard from "./Screens/Dashboard";
 import Main from "./Screens/Main";
 import GroceryList from "./Screens/GroceryList";
 import GroceryListSplitBill from "./Screens/GroceryListSplitBill";
+import Homepage from "./Screens/Homepage";
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,7 @@ function App() {
         <Stack.Screen name={"Loading"} component={Loading} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
+        <Stack.Screen name={"Homepage"} component={Homepage} />
         <Stack.Screen name={"Dashboard"} component={Dashboard} />
         <Stack.Screen name={"Main"} component={Main} />
         <Stack.Screen name={"GroceryList"} component={GroceryList} />

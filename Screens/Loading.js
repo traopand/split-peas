@@ -6,7 +6,7 @@ export default function Loading({ navigation }) {
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        navigation.replace("Dashboard");
+        navigation.replace("Homepage");
       } else {
         navigation.replace("Login");
       }
