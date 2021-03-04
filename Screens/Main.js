@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import {GiftedChat, InputToolbar} from 'react-native-gifted-chat'
 import AsyncStorage from '@react-native-community/async-storage'
-import { StyleSheet, TextInput, View, YellowBox, Button, TouchableOpacity, Text } from 'react-native'
+import { StyleSheet, TextInput, View, YellowBox, Button, TouchableOpacity, Text, LogBox } from 'react-native'
 import * as firebase from 'firebase'
 import 'firebase/firestore'
 import { Icon } from 'react-native-elements'
@@ -21,6 +21,8 @@ const firebaseConfig= {
 if (firebase.apps.length === 0) {
     firebase.initializeApp(firebaseConfig)
 }
+
+// LogBox.ignoreLogs();
 
 YellowBox.ignoreWarnings(['Setting a timer for a long period of time'])
 

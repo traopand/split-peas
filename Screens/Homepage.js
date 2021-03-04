@@ -5,6 +5,9 @@ import {
     StyleSheet,
     Alert,
     Image,
+    Modal,
+    Pressable,
+    Keyboard,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as firebase from "firebase";
@@ -14,20 +17,26 @@ import Plitpeas from "../assets/Plitpeas.png";
 import Fridge from "../assets/Fridge.png";
 import Recipeas from "../assets/Recipeas.png";
 import Coupon from "../assets/Coupon.png";
+import { Input } from "react-native-elements";
 
 export default function Homepage({ navigation }) {
     let currentUserUID = firebase.auth().currentUser.uid;
     const [firstName, setFirstName] = useState("");
+    const [userId, setUserId] = useState("");
+    const groupRef = firebase.firestore().collection("group");
+
     const [createGroupVisible, setCreateGroupVisible] = useState(false);
-    const [groupName, setGroupName] = useState("Pod Name");
+    const [groupName, setGroupName] = useState("");
     const [listMembers, setListMembers] = useState("");
+    const [createPod, setCreatePod] = useState(true);
+    const [podCode, setPodCode] = useState('');
 
     // TUTORIAL GROUP CREATOR //
     const [group, setGroup] = useState("");
 
-    const [listName, setListName] = useState("List Name");
+    const [podName, setPodName] = useState("Pod Name");
     const [infoVisible, setInfoVisible] = useState(false);
-    const listRef = firebase.firestore().collection("groceryList");
+
 
     useEffect(() => {
         async function getUserInfo() {
@@ -52,82 +61,198 @@ export default function Homepage({ navigation }) {
         navigation.replace("Login");
     };
 
-
     const temp = () => {
 
     }
 
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+    const addPod = async () => {
+        await groupRef.add({
+            name: podName,
+            code: "12345",
+        })
+        .then( async function (docRef){
+            await groupRef.doc(docRef.id).update({
+                code: docRef.id.substr(docRef.id.length - 6)
+            });
+
+            const userCollectionRef = firebase.firestore().collection(`group/${docRef.id}/usersCollection`);
+            
+            await userCollectionRef.add({
+                userId: currentUserUID,
+            });
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+
+        setPodName("");
+        setCreateGroupVisible(!createGroupVisible)
+        Keyboard.dismiss();
+    }
+
+    const joinPod = async (code) => {
+        let doc = await firebase
+        .firestore()
+        .collection("group")
+        .where('code', '==', code)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach(async (doc) => {
+            
+                const userCollectionRef = firebase.firestore().collection(`group/${doc.id}/usersCollection`);
+
+                await userCollectionRef.add({
+                    userId: currentUserUID,
+                });
+            });
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });;
+
+        setPodCode("");
+        setCreateGroupVisible(!createGroupVisible)
+        Keyboard.dismiss();
+    }
 
     return (
-        <>
-            <View style={styles.container}>
-                {/* SplitPeas Title */}
-                <View style={{ flexGrow: 4, marginBottom: -70, flexDirection: 'row', backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
-                    <Image style={styles.logo} source={Logo} />
-                    <Image source={Plitpeas} />
-                </View>
+        <View style={styles.container}>
 
-                {/* Edit Profile and Logout Buttons */}
-                <View style={styles.horizButtonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={temp}>
-                        <Text style={styles.buttonText}>Edit Profile</Text>
-                    </TouchableOpacity>
+            {/* Modal Starts */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={createGroupVisible}
+                onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setModalVisible(!createGroupVisible);
+                }}
+            >
+                <View style={styles.centeredView}>
 
-                    <TouchableOpacity style={styles.button} onPress={logout}>
-                        <Text style={styles.buttonText}>LogOut</Text>
-                    </TouchableOpacity>
-                </View>
+                    <View style={styles.modalView}>
+                        
+                        {createPod ? 
+                        <>
+                        <Input
+                         inputContainerStyle={{
+                             borderBottomColor: "#A4BEAD",
+                             borderBottomWidth: 1.5,
+                         }}
+                         placeholder={"Enter Pod Name"}
+                         onChangeText={(podName) => setPodName(podName)}
+                         value={podName}
+                         style={styles.podName}
+                     />
 
-                {/* Entire Bottom Portion, both green containers*/}
-                <View style={{ flexGrow: 3}} >
-                
-                    {/* My Fridge, Reci-peas, Coupons */}
-                    <View style={styles.menuContainer}>
-                   
-                        <View style={styles.menuItemContainer}>
-                            <Image style={{width: 35, height: 48, marginLeft: 23}} source={Fridge} />
-                            <TouchableOpacity style={styles.button} onPress={temp}>
-                                <Text style={styles.buttonText}>My Fridge</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.menuItemContainer}>
-                            <Image style={{width: 39, height: 47, marginLeft: 17}} source={Recipeas} />
-                            <TouchableOpacity style={styles.button} onPress={temp}>
-                                <Text style={styles.buttonText}>Reci-peas</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.menuItemContainer}>
-                            <Image style={{width: 48, height: 47, marginLeft: 10}} source={Coupon} />
-                            <TouchableOpacity style={styles.button} onPress={temp}>
-                                <Text style={styles.buttonText}>Coupons</Text>
-                            </TouchableOpacity>
-                        </View>
+                     <Pressable onPress={() => addPod()} style={styles.button}>
+                         <Text style={styles.buttonText}>Create Pod</Text>
+                     </Pressable>
+                     </>
+                     :
+                     <>
+
+                      <Input
+                            inputContainerStyle={{
+                                borderBottomColor: "#A4BEAD",
+                                borderBottomWidth: 1.5,
+                            }}
+                            placeholder={"Enter Pod Code"}
+                            onChangeText={(podCode) => setPodCode(podCode)}
+                            value={podCode}
+                            style={styles.podName}
+                        />
+
+                        <Pressable onPress={() => joinPod(podCode)} style={styles.button}>
+                            <Text style={styles.buttonText}>Join Pod</Text>
+                        </Pressable>
+                     </>
+                    }
+
+                        <Pressable
+                            style={styles.button}
+                            onPress={() => setCreateGroupVisible(!createGroupVisible)}
+                        >
+                            <Text style={styles.buttonText}>Close</Text>
+                        </Pressable>
+
                     </View>
+                </View>
+            </Modal>
 
-                    {/* My pods */}
-                    <View style={styles.greenContainer}>
+            {/* Modal Ends */}
 
-                        <Text style={styles.h2}>My Pods</Text>
-                        <TouchableOpacity style={styles.myPodButton} onPress={() => navigation.navigate("Dashboard")}>
-                            <Text style={styles.myPodText}>Ravenous Raccoons</Text>
+
+            {/* SplitPeas Title */}
+            <View style={{ flexGrow: 4, marginBottom: -70, flexDirection: 'row', backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
+                <Image style={styles.logo} source={Logo} />
+                <Image source={Plitpeas} />
+            </View>
+
+            {/* Edit Profile and Logout Buttons */}
+            <View style={styles.horizButtonContainer}>
+                <TouchableOpacity style={styles.button} onPress={temp}>
+                    <Text style={styles.buttonText}>Edit Profile</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={logout}>
+                    <Text style={styles.buttonText}>LogOut</Text>
+                </TouchableOpacity>
+            </View>
+
+            {/* Entire Bottom Portion, both green containers*/}
+            <View style={{ flexGrow: 3 }} >
+
+                {/* My Fridge, Reci-peas, Coupons */}
+                <View style={styles.menuContainer}>
+
+                    <View style={styles.menuItemContainer}>
+                        <Image style={{ width: 35, height: 48, marginLeft: 23 }} source={Fridge} />
+                        <TouchableOpacity style={styles.button} onPress={temp}>
+                            <Text style={styles.buttonText}>My Fridge</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.menuItemContainer}>
+                        <Image style={{ width: 39, height: 47, marginLeft: 17 }} source={Recipeas} />
+                        <TouchableOpacity style={styles.button} onPress={temp}>
+                            <Text style={styles.buttonText}>Reci-peas</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.menuItemContainer}>
+                        <Image style={{ width: 48, height: 47, marginLeft: 10 }} source={Coupon} />
+                        <TouchableOpacity style={styles.button} onPress={temp}>
+                            <Text style={styles.buttonText}>Coupons</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* My pods */}
+                <View style={styles.greenContainer}>
+
+                    <Text style={styles.h2}>My Pods</Text>
+                    <TouchableOpacity style={styles.myPodButton} onPress={() => navigation.navigate("Dashboard")}>
+                        <Text style={styles.myPodText}>Ravenous Raccoons</Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.horizButtonContainer}>
+                        <TouchableOpacity style={styles.button} onPress={() => {
+                            setCreatePod(true)
+                            setCreateGroupVisible(true)}
+                        }>
+                            <Text style={styles.buttonText}>Create a Pod</Text>
                         </TouchableOpacity>
 
-                        <View style={styles.horizButtonContainer}>
-                            <TouchableOpacity style={styles.button} onPress={temp}>
-                                <Text style={styles.buttonText}>Create a Pod</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={styles.button} onPress={temp}>
-                                <Text style={styles.buttonText}>Join a Pod</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <TouchableOpacity style={styles.button} onPress={() => {
+                            setCreatePod(false)
+                            setCreateGroupVisible(true)
+                        }}>
+                            <Text style={styles.buttonText}>Join a Pod</Text>
+                        </TouchableOpacity>
                     </View>
-
                 </View>
+
             </View>
-        </>
+        </View>
     );
 }
 
@@ -146,22 +271,22 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
 
-    greenContainer:{
+    greenContainer: {
         backgroundColor: "#E1EFD6",
-         borderRadius: 15, 
-         marginTop: '5%',
+        borderRadius: 15,
+        marginTop: '5%',
     },
 
-    menuContainer:{
+    menuContainer: {
         paddingVertical: '5%',
         backgroundColor: "#E1EFD6",
-         borderRadius: 15, 
-         marginVertical: '5%',
+        borderRadius: 15,
+        marginVertical: '5%',
     },
 
-    menuItemContainer:{
-       flexDirection: 'row',
-       alignItems: "center",
+    menuItemContainer: {
+        flexDirection: 'row',
+        alignItems: "center",
         justifyContent: "center",
     },
 
@@ -209,6 +334,40 @@ const styles = StyleSheet.create({
     myPodText: {
         fontSize: 20,
         color: "white",
-    }
+    },
 
+    // modal styles
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
+    },
+
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        borderColor: "#A4BEAD",
+        borderWidth: 2,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        width: "90%",
+        height: 300,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    podName: {
+        marginBottom: 10,
+        textAlign: "center",
+        fontSize: 26,
+        color: "#5D7E7D",
+        fontWeight: "bold",
+    },
 });

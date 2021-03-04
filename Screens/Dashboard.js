@@ -35,7 +35,7 @@ export default function Dashboard({ navigation }) {
   // TUTORIAL GROUP CREATOR //
   const [group, setGroup] = useState("");
 
-  const [listName, setListName] = useState("List Name");
+  const [listName, setListName] = useState("");
   const [infoVisible, setInfoVisible] = useState(false);
   const listRef = firebase.firestore().collection("groceryList");
 
@@ -106,9 +106,10 @@ export default function Dashboard({ navigation }) {
                   borderBottomWidth: 1.5,
                 }}
                 onChangeText={(listName) => setListName(listName)}
+                placeholder="Enter List Name"
                 value={listName}
                 style={styles.listName}
-              ></Input>
+              />
 
               <View style={{ flexDirection: "row" }}>
                 <Text style={styles.evenSplit}>Even Split Mode</Text>
@@ -121,11 +122,11 @@ export default function Dashboard({ navigation }) {
                 />
               </View>
 
-              <TouchableOpacity onPress={addList} style={[styles.button]}>
+              <TouchableOpacity onPress={addList} style={styles.button}>
                 <Text style={styles.buttonText}>Add List</Text>
               </TouchableOpacity>
               <Pressable
-                style={[styles.button]}
+                style={styles.button}
                 onPress={() => setCreateGroupVisible(!createGroupVisible)}
               >
                 <Text style={styles.buttonText}>Close</Text>
@@ -313,7 +314,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: "#000",
     width: "90%",
-    height: "50%",
+    height: 400,
     shadowOffset: {
       width: 0,
       height: 2,
