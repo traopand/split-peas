@@ -8,16 +8,22 @@ import {
   Pressable,
   Switch,
   Image,
-  Button,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as firebase from "firebase";
-import { loggingOut } from "../API/firebaseMethods";
-import { GiftedChat } from "react-native-gifted-chat";
 import { Input } from "react-native-elements";
 import Logo from "../assets/Logo.png";
 import LeftArrow from "../assets/left-arrow.png";
 import Rectangle from "../assets/Rectangle.png";
+import BillIcon from "../assets/BillIcon.png";
+import GroceryIcon from "../assets/groceryIcon.png";
+import AddMember from "../assets/AddMember.png";
+import Member1 from "../assets/Member1.png";
+import Member2 from "../assets/Member2.png";
+import Member3 from "../assets/Member3.png";
+import Member4 from "../assets/Member4.png";
+import Member5 from "../assets/Member5.png";
+import Member6 from "../assets/Member6.png";
 
 export default function Dashboard({ navigation }) {
   let currentUserUID = firebase.auth().currentUser.uid;
@@ -51,11 +57,6 @@ export default function Dashboard({ navigation }) {
     getUserInfo();
   });
 
-  const logout = () => {
-    loggingOut();
-    navigation.replace("Login");
-  };
-
   const gotoGroceryList = () => {
     navigation.replace("GroceryList");
   };
@@ -79,13 +80,15 @@ export default function Dashboard({ navigation }) {
   }
 
   return (
+    <>
+    <View style={styles.backButtonContainer}>
+      <TouchableOpacity style={styles.backButton} onPress={() => gotoHomepage()}>
+            <Image style={styles.backButtonImg} source={LeftArrow} />
+        </TouchableOpacity>
+    </View>
+
     <View style={styles.container}>
       
-      <View style={{ alignSelf: "flex-start"}}>
-      <TouchableOpacity style={styles.backButton} onPress={() => gotoHomepage()}>
-          <Image source={LeftArrow} />
-      </TouchableOpacity>
-      </View>
 
       <Image style={styles.logo} source={Logo} />
 
@@ -115,7 +118,7 @@ export default function Dashboard({ navigation }) {
             ></Input>
 
             <View style={{ flexDirection: "row"}}>
-              <Text style={styles.evenSplit}>Even Split Mode </Text>
+              <Text style={styles.evenSplit}>Even Split Mode</Text>
               <Switch
                 trackColor={{ false: "#767577", true: "#B4B7FF" }}
                 thumbColor={isEnabled ? "#E1EFD6" : "#f4f3f4"}
@@ -139,7 +142,7 @@ export default function Dashboard({ navigation }) {
         </View>
       </Modal>
 
-      <View style={styles.quickAdd}>
+      <View style={styles.quickAddContainer}>
         <Image style={styles.rectangle} source={Rectangle} />
         <Text style={styles.quickAddText}>Quick Add</Text>
         <Input
@@ -154,8 +157,20 @@ export default function Dashboard({ navigation }) {
         >
           Enter Item
         </Input>
+        <Input
+          inputContainerStyle={{
+            borderBottomColor: "#C5C5C7",
+            paddingHorizontal: 10,
+            width: "70%",
+            marginLeft: 40,
+            marginRight: 40,
+          }}
+          style={styles.textInput}
+        >
+          Select List
+        </Input>
         <TouchableOpacity style={styles.addButton}>
-          <Text style={styles.logout}>Add</Text>
+          <Text style={styles.buttonText}>Add</Text>
         </TouchableOpacity>
       </View>
 
@@ -163,20 +178,27 @@ export default function Dashboard({ navigation }) {
         style={styles.button}
         onPress={() => setCreateGroupVisible(true)}
       >
-        <Text style={styles.logout}>Create List</Text>
+        <Text style={styles.buttonText}>Create List</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("GroceryList")}
       >
-        <Text style={styles.logout}>Go to list</Text>
+        <Text style={styles.buttonText}>Go to list</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.button} onPress={logout}>
-        <Text style={styles.logout}>Log Out</Text>
-      </TouchableOpacity>
+      
+      <View style={{flexDirection: 'row'}}>
+        <Image style={styles.avatar} source={Member1} />
+        <Image style={styles.avatar} source={Member2} />
+        <Image style={styles.avatar} source={Member3} />
+        <Image style={styles.avatar} source={Member4} />
+        <Image style={styles.avatar} source={Member5} />
+        <Image style={styles.avatar} source={Member6} />
+      </View>
+    
     </View>
+    </>
   );
 }
 
@@ -188,76 +210,108 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  titleText: {
-    fontSize: 35,
-    fontWeight: "bold",
-    color: "#5C7F7B",
-    marginTop: -30,
-    paddingBottom: 10,
+  // header peice
+  backButtonContainer:{
+    backgroundColor: "#fff",
+    alignItems: "flex-start",
+  },
+  backButton:{
+    backgroundColor: "#fff",
+    marginLeft: 30,
+    marginTop: 40,    
   },
 
-  rectangle: {
-    width: "55%",
-    height: "16%",
-    marginLeft: "22%",
-    marginRight: "22%",
-    marginTop: -80,
-    marginBottom: 15,
+  logo: {
+    alignSelf: "center",
+    width: 80,
+    height: 110,
+    marginTop: -160,
   },
 
-  nameText: {
-    fontSize: 20,
-    color: "#5C7F7B",
-    paddingBottom: 25,
-  },
-
-  quickAdd: {
+  // quick add stuff
+  quickAddContainer: {
     backgroundColor: "#E1EFD6",
     width: "70%",
     height: "30%",
-    paddingTop: 20,
+    marginTop: 25,
+    marginBottom: 10,
+    paddingTop: 0,
     justifyContent: "center",
     alignContent: "center",
   },
 
-  quickAddText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-
   textInput: {
+    marginTop: -20,
     paddingTop: 10,
     fontSize: 15,
-    paddingBottom: 10,
     textAlign: "center",
     color: "#393C35",
   },
 
-  titleContainer: {
-    marginBottom: 40,
-    alignItems: "center",
-    justifyContent: "center",
+  quickAddText: {
+    fontSize: 23,
+    paddingTop: 7,
+    paddingBottom: 19,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
+  rectangle: {
+    width: "55%",
+    height: "14%",
+    marginLeft: "22%",
+    marginRight: "22%",
+    marginTop: -40,
   },
 
   addButton: {
     backgroundColor: "#B4B7FF",
-    marginTop: 30,
-    width: 150,
-    height: 56,
+    marginTop: -10,
+    width: 120,
+    height: 40,
     borderRadius: 30,
-    marginLeft: 70,
-    marginRight: 70,
+    alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
   },
 
-  button: {
-    backgroundColor: "#B4B7FF",
-    marginTop: 30,
-    width: 150,
-    height: 56,
-    borderRadius: 30,
+  // Text
+  titleText: {
+    fontSize: 30,
+    fontWeight: "bold",
+    color: "#5C7F7B",
+    marginTop: -20,
+  },
+
+  nameText: {
+    fontSize: 18,
+    color: "#5C7F7B",
+    paddingBottom: 20,
+  },
+
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
+  listName: {
+    marginBottom: 10,
+    textAlign: "center",
+    fontSize: 36,
+    color: "#5D7E7D",
+    fontWeight: "bold",
+  },
+
+  buttonText: {
+    fontSize: 18,
+    color: "white",
+  },
+
+  // containers
+
+  titleContainer: {
+    marginBottom: 40,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -290,34 +344,10 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
 
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  listName: {
-    marginBottom: 10,
-    textAlign: "center",
-    fontSize: 36,
-    color: "#5D7E7D",
-    fontWeight: "bold",
-  },
-
   evenSplit: {
     fontSize: 25,
     paddingRight: 10,
     color: "#5D7E7D",
-  },
-
-  logout: {
-    fontSize: 18,
-    color: "white",
   },
 
   evenSplitIcon: {
@@ -326,13 +356,29 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
 
-  backButton:{
-    marginLeft: 20,
+  avatar:{
+    width: 50,
+    height: 50,
+    marginTop: 40,
   },
 
-  logo: {
-    alignSelf: "center",
-    width: 80,
-    height: 110,
+  // buttons
+  button: {
+    backgroundColor: "#B4B7FF",
+    marginTop: 30,
+    width: 150,
+    height: 56,
+    borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
   },
+
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+
+  
 });
