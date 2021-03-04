@@ -57,14 +57,9 @@ export default function Dashboard({ navigation }) {
     getUserInfo();
   });
 
-  const gotoGroceryList = () => {
-    navigation.replace("GroceryList");
-  };
-
   const gotoHomepage = () => {
     navigation.replace("Homepage");
   };
-
 
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
@@ -81,123 +76,121 @@ export default function Dashboard({ navigation }) {
 
   return (
     <>
-    <View style={styles.backButtonContainer}>
-      <TouchableOpacity style={styles.backButton} onPress={() => gotoHomepage()}>
-            <Image style={styles.backButtonImg} source={LeftArrow} />
+      <View style={styles.backButtonContainer}>
+        <TouchableOpacity style={styles.backButton} onPress={() => gotoHomepage()}>
+          <Image style={styles.backButtonImg} source={LeftArrow} />
         </TouchableOpacity>
-    </View>
+      </View>
 
-    <View style={styles.container}>
-      
+      <View style={styles.container}>
+        <Image style={styles.logo} source={Logo} />
 
-      <Image style={styles.logo} source={Logo} />
+        <Text style={styles.h1}>Ravenous Raccoons</Text>
+        <Text style={styles.nameText}>Hi {firstName}</Text>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={createGroupVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!createGroupVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
 
-      <Text style={styles.titleText}>Ravenous Raccoons</Text>
-      <Text style={styles.nameText}>Hi {firstName}</Text>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={createGroupVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!createGroupVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
+            {/* The popuup */}
+            <View style={styles.modalView}>
+              <Input
+                inputContainerStyle={{
+                  borderBottomColor: "#A4BEAD",
+                  borderBottomWidth: 1.5,
+                }}
+                onChangeText={(listName) => setListName(listName)}
+                value={listName}
+                style={styles.listName}
+              ></Input>
 
-          {/* The popuup */}
-          <View style={styles.modalView}>
-            <Input
-              inputContainerStyle={{
-                borderBottomColor: "#A4BEAD",
-                borderBottomWidth: 1.5,
-              }}
-              onChangeText={(listName) => setListName(listName)}
-              value={listName}
-              style={styles.listName}
-            ></Input>
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.evenSplit}>Even Split Mode</Text>
+                <Switch
+                  trackColor={{ false: "#767577", true: "#B4B7FF" }}
+                  thumbColor={isEnabled ? "#E1EFD6" : "#f4f3f4"}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                />
+              </View>
 
-            <View style={{ flexDirection: "row"}}>
-              <Text style={styles.evenSplit}>Even Split Mode</Text>
-              <Switch
-                trackColor={{ false: "#767577", true: "#B4B7FF" }}
-                thumbColor={isEnabled ? "#E1EFD6" : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitch}
-                value={isEnabled}
-              />
+              <TouchableOpacity onPress={addList} style={[styles.button]}>
+                <Text style={styles.buttonText}>Add List</Text>
+              </TouchableOpacity>
+              <Pressable
+                style={[styles.button]}
+                onPress={() => setCreateGroupVisible(!createGroupVisible)}
+              >
+                <Text style={styles.buttonText}>Close</Text>
+              </Pressable>
+
             </View>
-
-            <TouchableOpacity onPress={addList} style={[styles.button]}>
-              <Text style={styles.textStyle}>Add List</Text>
-            </TouchableOpacity>
-            <Pressable
-              style={[styles.button]}
-              onPress={() => setCreateGroupVisible(!createGroupVisible)}
-            >
-              <Text style={styles.textStyle}>Close</Text>
-            </Pressable>
-
           </View>
+        </Modal>
+
+        <View style={styles.quickAddContainer}>
+          <Image style={styles.rectangle} source={Rectangle} />
+          <Text style={styles.quickAddText}>Quick Add</Text>
+          <Input
+            inputContainerStyle={{
+              borderBottomColor: "#C5C5C7",
+              paddingHorizontal: 10,
+              width: "70%",
+              marginLeft: 40,
+              marginRight: 40,
+            }}
+            style={styles.textInput}
+          >
+            Enter Item
+        </Input>
+          <Input
+            inputContainerStyle={{
+              borderBottomColor: "#C5C5C7",
+              paddingHorizontal: 10,
+              width: "70%",
+              marginLeft: 40,
+              marginRight: 40,
+            }}
+            style={styles.textInput}
+          >
+            Select List
+        </Input>
+          <TouchableOpacity style={styles.addButton}>
+            <Text style={styles.buttonText}>Add</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
 
-      <View style={styles.quickAddContainer}>
-        <Image style={styles.rectangle} source={Rectangle} />
-        <Text style={styles.quickAddText}>Quick Add</Text>
-        <Input
-          inputContainerStyle={{
-            borderBottomColor: "#C5C5C7",
-            paddingHorizontal: 10,
-            width: "70%",
-            marginLeft: 40,
-            marginRight: 40,
-          }}
-          style={styles.textInput}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setCreateGroupVisible(true)}
         >
-          Enter Item
-        </Input>
-        <Input
-          inputContainerStyle={{
-            borderBottomColor: "#C5C5C7",
-            paddingHorizontal: 10,
-            width: "70%",
-            marginLeft: 40,
-            marginRight: 40,
-          }}
-          style={styles.textInput}
-        >
-          Select List
-        </Input>
-        <TouchableOpacity style={styles.addButton}>
-          <Text style={styles.buttonText}>Add</Text>
+          <Text style={styles.buttonText}>Create List</Text>
         </TouchableOpacity>
-      </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setCreateGroupVisible(true)}
-      >
-        <Text style={styles.buttonText}>Create List</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("GroceryList")}
+        >
+          <Text style={styles.buttonText}>Go to list</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("GroceryList")}
-      >
-        <Text style={styles.buttonText}>Go to list</Text>
-      </TouchableOpacity>
-      
-      <View style={{flexDirection: 'row'}}>
-        <Image style={styles.avatar} source={Member1} />
-        <Image style={styles.avatar} source={Member2} />
-        <Image style={styles.avatar} source={Member3} />
-        <Image style={styles.avatar} source={Member4} />
-        <Image style={styles.avatar} source={Member5} />
-        <Image style={styles.avatar} source={Member6} />
+        <View style={{ flexDirection: 'row' }}>
+          <Image style={styles.avatar} source={Member1} />
+          <Image style={styles.avatar} source={Member2} />
+          <Image style={styles.avatar} source={Member3} />
+          <Image style={styles.avatar} source={Member4} />
+          <Image style={styles.avatar} source={Member5} />
+          <Image style={styles.avatar} source={Member6} />
+        </View>
+
       </View>
-    
-    </View>
     </>
   );
 }
@@ -211,21 +204,21 @@ const styles = StyleSheet.create({
   },
 
   // header peice
-  backButtonContainer:{
+  backButtonContainer: {
     backgroundColor: "#fff",
     alignItems: "flex-start",
   },
-  backButton:{
+  backButton: {
     backgroundColor: "#fff",
     marginLeft: 30,
-    marginTop: 40,    
+    marginTop: 40,
   },
 
   logo: {
     alignSelf: "center",
     width: 80,
     height: 110,
-    marginTop: -160,
+    marginTop: -140,
   },
 
   // quick add stuff
@@ -276,23 +269,22 @@ const styles = StyleSheet.create({
   },
 
   // Text
-  titleText: {
+  h1: {
     fontSize: 30,
     fontWeight: "bold",
     color: "#5C7F7B",
     marginTop: -20,
   },
 
+  buttonText: {
+    fontSize: 18,
+    color: "white",
+  },
+
   nameText: {
     fontSize: 18,
     color: "#5C7F7B",
     paddingBottom: 20,
-  },
-
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
   },
 
   listName: {
@@ -303,19 +295,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  buttonText: {
-    fontSize: 18,
-    color: "white",
-  },
-
   // containers
-
-  titleContainer: {
-    marginBottom: 40,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -350,13 +330,7 @@ const styles = StyleSheet.create({
     color: "#5D7E7D",
   },
 
-  evenSplitIcon: {
-    width: 30,
-    height: 30,
-    marginLeft: 20,
-  },
-
-  avatar:{
+  avatar: {
     width: 50,
     height: 50,
     marginTop: 40,
@@ -372,13 +346,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-
-  
 });
