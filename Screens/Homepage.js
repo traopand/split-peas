@@ -67,7 +67,7 @@ export default function Homepage({ navigation }) {
                 </View>
 
                 {/* Edit Profile and Logout Buttons */}
-                <View style={{ flexGrow: 1, flexDirection: 'row', backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
+                <View style={{ flexGrow: 1, marginBottom: 30, flexDirection: 'row', backgroundColor: "#fff", alignItems: "center", justifyContent: "center" }}>
                     <TouchableOpacity style={styles.button} onPress={temp}>
                         <Text style={styles.buttonText}>Edit Profile</Text>
                     </TouchableOpacity>
@@ -77,7 +77,7 @@ export default function Homepage({ navigation }) {
                     </TouchableOpacity>
                 </View>
 
-                <View style={{ flexGrow: 5 }} >
+                <View style={{ flexGrow: 4 }} >
                     <TouchableOpacity style={styles.button} onPress={temp}>
                         <Text style={styles.buttonText}>My Fridge</Text>
                     </TouchableOpacity>
