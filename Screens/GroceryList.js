@@ -16,14 +16,14 @@ import { Button, TextInput } from "react-native-paper";
 import Logo from "../assets/Logo.png";
 import LeftArrow from "../assets/left-arrow.png";
 
-export default function GroceryList({ navigation }) {
+export default function GroceryList({ navigation, route}) {
   let currentUserUID = firebase.auth().currentUser.uid;
   const [firstName, setFirstName] = useState("Amanda");
 
   const [groceryItem, setGroceryItem] = useState("");
   // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
-  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
-  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection").orderBy('createdAt');
+  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM1/itemCollection");
+  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM1/itemCollection").orderBy('createdAt');
 
   const [groceryItemName, setGroceryItemName] = useState("");
 
@@ -37,6 +37,9 @@ export default function GroceryList({ navigation }) {
         .collection("usersList")
         .doc(currentUserUID)
         .get();
+
+        // console.log("THESEARE THE PARAMS", route.params.listName);
+        // console.log("THIS is THe ID", route.params.id);
 
       if (!doc.exists) {
         Alert.alert("No user data found!");

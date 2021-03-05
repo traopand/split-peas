@@ -4,9 +4,9 @@
     "slug": "split-peas",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Loading.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Loading.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/Loading.png",
         "backgroundColor": "#FFFFFF"
       }
     },

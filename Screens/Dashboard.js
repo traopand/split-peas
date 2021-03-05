@@ -8,7 +8,10 @@ import {
   Pressable,
   Switch,
   Image,
+  Keyboard,
+  FlatList,
 } from "react-native";
+import { List } from 'react-native-paper';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as firebase from "firebase";
 import { Input } from "react-native-elements";
@@ -24,6 +27,7 @@ import Member3 from "../assets/Member3.png";
 import Member4 from "../assets/Member4.png";
 import Member5 from "../assets/Member5.png";
 import Member6 from "../assets/Member6.png";
+import MyLists from "./MyLists";
 
 export default function Dashboard({ navigation }) {
   let currentUserUID = firebase.auth().currentUser.uid;
@@ -31,12 +35,14 @@ export default function Dashboard({ navigation }) {
   const [createGroupVisible, setCreateGroupVisible] = useState(false);
   const [groupName, setGroupName] = useState("Pod Name");
   const [listMembers, setListMembers] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // TUTORIAL GROUP CREATOR //
   const [group, setGroup] = useState("");
 
   const [listName, setListName] = useState("");
   const [infoVisible, setInfoVisible] = useState(false);
+
   const listRef = firebase.firestore().collection("groceryList");
 
   useEffect(() => {
@@ -55,6 +61,8 @@ export default function Dashboard({ navigation }) {
       }
     }
     getUserInfo();
+
+
   });
 
   const gotoHomepage = () => {
@@ -66,12 +74,14 @@ export default function Dashboard({ navigation }) {
 
   async function addList() {
     await listRef.add({
-      title: listName,
+      listName: listName,
       admin: firstName,
-      members: listMembers,
       evenSplit: isEnabled,
+      createdAt: firebase.firestore.Timestamp.fromDate(new Date()).toDate(),
     });
     setListName("");
+    setCreateGroupVisible(!createGroupVisible)
+    Keyboard.dismiss();
   }
 
   return (
@@ -122,9 +132,9 @@ export default function Dashboard({ navigation }) {
                 />
               </View>
 
-              <TouchableOpacity onPress={addList} style={styles.button}>
+              <Pressable onPress={() => addList()} style={styles.button}>
                 <Text style={styles.buttonText}>Add List</Text>
-              </TouchableOpacity>
+              </Pressable>
               <Pressable
                 style={styles.button}
                 onPress={() => setCreateGroupVisible(!createGroupVisible)}
@@ -168,20 +178,6 @@ export default function Dashboard({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setCreateGroupVisible(true)}
-        >
-          <Text style={styles.buttonText}>Create List</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("GroceryList")}
-        >
-          <Text style={styles.buttonText}>Go to list</Text>
-        </TouchableOpacity>
-
         <View style={{ flexDirection: 'row' }}>
           <Image style={styles.avatar} source={Member1} />
           <Image style={styles.avatar} source={Member2} />
@@ -190,6 +186,19 @@ export default function Dashboard({ navigation }) {
           <Image style={styles.avatar} source={Member5} />
           <Image style={styles.avatar} source={Member6} />
         </View>
+
+        <View style={{ flexDirection: 'row', paddingTop: 30,}}>
+          <Text style={styles.listText}>My Lists</Text>
+            <TouchableOpacity
+              style={styles.plusButton}
+              // onPress={() => setCreateGroupVisible(true)}
+              onPress={() => navigation.navigate("GroceryList")}
+            >
+              <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
+        </View>
+        
+      <MyLists />
 
       </View>
     </>
@@ -219,16 +228,16 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: 80,
     height: 110,
-    marginTop: -140,
+    marginTop: -50,
   },
 
   // quick add stuff
   quickAddContainer: {
     backgroundColor: "#E1EFD6",
     width: "70%",
-    height: "30%",
-    marginTop: 25,
-    marginBottom: 10,
+    height: "28%",
+    marginTop: 5,
+    marginBottom: -10,
     paddingTop: 0,
     justifyContent: "center",
     alignContent: "center",
@@ -255,7 +264,7 @@ const styles = StyleSheet.create({
     height: "14%",
     marginLeft: "22%",
     marginRight: "22%",
-    marginTop: -40,
+    marginTop: -30,
   },
 
   addButton: {
@@ -288,10 +297,17 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
 
+  listText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: "#5C7F7B",
+    paddingRight: 20,
+  },
+
   listName: {
     marginBottom: 10,
     textAlign: "center",
-    fontSize: 36,
+    fontSize: 30,
     color: "#5D7E7D",
     fontWeight: "bold",
   },
@@ -344,6 +360,19 @@ const styles = StyleSheet.create({
     width: 150,
     height: 56,
     borderRadius: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  listItem: {
+    padding: 0,
+    color: 'purple',
+  },
+
+  plusButton: {
+    backgroundColor: "#B4B7FF",
+    width: 40,
+    height: 40,
+    borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
   },

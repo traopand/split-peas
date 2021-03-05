@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, FlatList, View, Text, Alert, Image, TouchableOpacity, Keyboard } from "react-native";
+import { StyleSheet, FlatList, View, Text, Alert, Image, TouchableOpacity, Keyboard, Pressable } from "react-native";
 import GroceryItemSplitBill from "./GroceryItemSplitBill";
 import { Input } from "react-native-elements";
 import * as firebase from "firebase";
-import { Button, TextInput } from "react-native-paper";
+import { Button, Modal, TextInput } from "react-native-paper";
 import Logo from "../assets/Logo.png";
 import LeftArrow from "../assets/left-arrow.png";
+import Document from "../assets/Document.png";
 
 export default function GroceryListSplitBill({ navigation }) {
   let currentUserUID = firebase.auth().currentUser.uid;
@@ -20,6 +21,8 @@ export default function GroceryListSplitBill({ navigation }) {
 
   const [loading, setLoading] = useState(true);
   const [groceryList, setGroceryList] = useState([]);
+  const [createGroupVisible, setCreateGroupVisible] = useState(false);
+  const [amountOwed, setAmountOwed] = useState(0);
 
   useEffect(() => {
     async function getUserInfo() {
@@ -37,7 +40,7 @@ export default function GroceryListSplitBill({ navigation }) {
       }
     }
     getUserInfo();
-
+    
     async function getGroupInfo() {
       let doc = await firebase
         .firestore()
@@ -54,18 +57,6 @@ export default function GroceryListSplitBill({ navigation }) {
       }
     }
     getGroupInfo();
-
-    //UPDATE LIST NAME:
-    async function updateName() {
-      await firebase
-        .firestore()
-        .collection("groceryList/UMa1GQigE73aEWGC9dUM")
-        .doc(id)
-        .update({
-          groceryListName: groceryItemName,
-        });
-      // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
-    }
 
     return query.onSnapshot((querySnapshot) => {
       const list = [];
@@ -95,7 +86,28 @@ export default function GroceryListSplitBill({ navigation }) {
       .doc("UMa1GQigE73aEWGC9dUM")
       .update({
           totalPrice: Number(totalPrice.replace(/[^0-9]/g, '')),
-        });
+        })
+      .then(async function () {
+        await firebase
+        .firestore()
+        .collection("group")
+        .where('code', '==', code)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach(async (doc) => {
+                const userCollectionRef = firebase.firestore().collection('groceryList').doc("UMa1GQigE73aEWGC9dUM")
+                .update({
+                    oweAmount: totalPrice/doc.numOfUsers,
+                  })
+
+                setAmountOwed(totalPrice/doc.numOfUsers);
+
+                await userCollectionRef.add({
+                    userId: currentUserUID,
+                });
+            });
+        })
+      });
         Keyboard.dismiss()
       // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
   }
@@ -120,6 +132,41 @@ export default function GroceryListSplitBill({ navigation }) {
   }
   return (
     <View style={styles.container}>
+
+      {/* Modal Starts */}
+      <Modal
+            animationType="slide"
+            transparent={true}
+            visible={createGroupVisible}
+            onRequestClose={() => {
+                Alert.alert("Modal has been closed.");
+                setModalVisible(!createGroupVisible);
+            }}
+        >
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+
+                    <Text style={styles.h1}>Split Success!</Text>
+                    <Text style={styles.h1}>You owe: Zoey Wei ${setAmountOwed}</Text>
+
+                     <Pressable style={styles.button}
+                        onPress={() => setCreateGroupVisible(!createGroupVisible)}
+                      >
+                         <Text style={styles.buttonText}>Pay Now</Text>
+                     </Pressable>
+
+                      <Pressable
+                          style={styles.button}
+                          onPress={() => setCreateGroupVisible(!createGroupVisible)}
+                      >
+                          <Text style={styles.buttonText}>Close</Text>
+                      </Pressable>
+
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Modal Ends */}
 
       <TouchableOpacity style={styles.backButton} onPress={() => handleDashboard()}>
           <Image source={LeftArrow} />
@@ -170,7 +217,11 @@ export default function GroceryListSplitBill({ navigation }) {
         onChangeText={setTotalPrice}
       />
 
-        <Button onPress={() => setBillTotal()} style={styles.button}>
+      <TouchableOpacity style={styles.backButton} onPress={() => setBillTotal()}>
+          <Image source={Document} />
+      </TouchableOpacity>
+
+        <Button onPress={() => setCreateGroupVisible(true)} style={styles.button}>
           <Text style={styles.p}>Split Bill</Text>
         </Button>
     </View>
@@ -233,4 +284,41 @@ const styles = StyleSheet.create({
     marginTop: -30,
     marginBottom: -20,
   },
+
+  // Modal styles
+// modal styles
+centeredView: {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  marginTop: 22,
+},
+
+modalView: {
+  margin: 20,
+  backgroundColor: "white",
+  borderRadius: 20,
+  borderColor: "#A4BEAD",
+  borderWidth: 2,
+  padding: 35,
+  alignItems: "center",
+  shadowColor: "#000",
+  width: "90%",
+  height: 300,
+  shadowOffset: {
+      width: 0,
+      height: 2,
+  },
+  shadowOpacity: 0.25,
+  shadowRadius: 4,
+  elevation: 5,
+},
+podName: {
+  marginBottom: 10,
+  textAlign: "center",
+  fontSize: 26,
+  color: "#5D7E7D",
+  fontWeight: "bold",
+},
+
 });

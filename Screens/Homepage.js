@@ -34,7 +34,7 @@ export default function Homepage({ navigation }) {
     // TUTORIAL GROUP CREATOR //
     const [group, setGroup] = useState("");
 
-    const [podName, setPodName] = useState("Pod Name");
+    const [podName, setPodName] = useState("");
     const [infoVisible, setInfoVisible] = useState(false);
 
 
@@ -72,7 +72,8 @@ export default function Homepage({ navigation }) {
         })
         .then( async function (docRef){
             await groupRef.doc(docRef.id).update({
-                code: docRef.id.substr(docRef.id.length - 6)
+                code: docRef.id.substr(docRef.id.length - 6),
+                numOfUsers: 1,
             });
 
             const userCollectionRef = firebase.firestore().collection(`group/${docRef.id}/usersCollection`);
@@ -80,6 +81,7 @@ export default function Homepage({ navigation }) {
             await userCollectionRef.add({
                 userId: currentUserUID,
             });
+            
         })
         .catch(function(error) {
             console.error("Error adding document: ", error);
@@ -91,16 +93,44 @@ export default function Homepage({ navigation }) {
     }
 
     const joinPod = async (code) => {
-        let doc = await firebase
+        // check if user exists already
+        await firebase
         .firestore()
         .collection("group")
         .where('code', '==', code)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach(async (doc) => {
-            
+                
+             await firebase.firestore()
+                .collection(`group/${doc.id}/usersCollection`)
+                .where('userId', '==', currentUserUID).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        return null;
+                    }
+                });
+             })
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+        });
+        
+        // adds user if they havent existed yet
+        await firebase
+        .firestore()
+        .collection("group")
+        .where('code', '==', code)
+        .get()
+        .update({
+            numOfUsers: firebase.firestore.FieldValue.increment(1),
+        })
+        .then((querySnapshot) => {
+            querySnapshot.forEach(async (doc) => {
+
                 const userCollectionRef = firebase.firestore().collection(`group/${doc.id}/usersCollection`);
 
+                console.log("It went throguh");
                 await userCollectionRef.add({
                     userId: currentUserUID,
                 });
@@ -207,19 +237,19 @@ export default function Homepage({ navigation }) {
                 <View style={styles.menuContainer}>
 
                     <View style={styles.menuItemContainer}>
-                        <Image style={{ width: 35, height: 48, marginLeft: 23 }} source={Fridge} />
+                        <Image style={{ width: 35, height: 48, marginRight: 7 }} source={Fridge} />
                         <TouchableOpacity style={styles.button} onPress={temp}>
                             <Text style={styles.buttonText}>My Fridge</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.menuItemContainer}>
-                        <Image style={{ width: 39, height: 47, marginLeft: 17 }} source={Recipeas} />
+                        <Image style={{ width: 39, height: 47, marginRight: 5 }} source={Recipeas} />
                         <TouchableOpacity style={styles.button} onPress={temp}>
                             <Text style={styles.buttonText}>Reci-peas</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.menuItemContainer}>
-                        <Image style={{ width: 48, height: 47, marginLeft: 10 }} source={Coupon} />
+                        <Image style={{ width: 48, height: 47, marginRight: 2 }} source={Coupon} />
                         <TouchableOpacity style={styles.button} onPress={temp}>
                             <Text style={styles.buttonText}>Coupons</Text>
                         </TouchableOpacity>
