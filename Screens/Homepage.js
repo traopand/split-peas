@@ -130,7 +130,7 @@ export default function Homepage({ navigation }) {
 
                 const userCollectionRef = firebase.firestore().collection(`group/${doc.id}/usersCollection`);
 
-                console.log("It went throguh");
+            
                 await userCollectionRef.add({
                     userId: currentUserUID,
                 });

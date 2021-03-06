@@ -9,10 +9,14 @@ import Login from "./Screens/Login";
 import CreateAccount from "./Screens/CreateAccount";
 import Loading from "./Screens/Loading";
 import Dashboard from "./Screens/Dashboard";
-import Main from "./Screens/Main";
 import GroceryList from "./Screens/GroceryList";
 import GroceryListSplitBill from "./Screens/GroceryListSplitBill";
 import Homepage from "./Screens/Homepage";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Setting a timer']);
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 const Stack = createStackNavigator();
 
@@ -31,7 +35,6 @@ function App() {
         <Stack.Screen name="CreateAccount" component={CreateAccount} />
         <Stack.Screen name={"Homepage"} component={Homepage} />
         <Stack.Screen name={"Dashboard"} component={Dashboard} />
-        <Stack.Screen name={"Main"} component={Main} />
         <Stack.Screen name={"GroceryList"} component={GroceryList} />
         <Stack.Screen name={"GroceryListSplitBill"} component={GroceryListSplitBill} />
         

@@ -24,13 +24,14 @@ import Member3 from "../assets/Member3.png";
 import Member4 from "../assets/Member4.png";
 import Member5 from "../assets/Member5.png";
 import Member6 from "../assets/Member6.png";
+import { TabRouter } from "react-navigation";
 
 
 export default function Dashboard({ navigation }) {
   let currentUserUID = firebase.auth().currentUser.uid;
   const [firstName, setFirstName] = useState("");
   const [createGroupVisible, setCreateGroupVisible] = useState(false);
-  const [groupName, setGroupName] = useState("Pod Name");
+  const [groupName, setGroupName] = useState("");
   const [listMembers, setListMembers] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -71,7 +72,7 @@ export default function Dashboard({ navigation }) {
               id: doc.id,
               listName,
           });
-          setListName(listName);
+
       });
 
       setGroceryList(list);
@@ -244,7 +245,7 @@ export default function Dashboard({ navigation }) {
                     <TouchableOpacity
                         style={styles.listButton}
                         onPress={() =>
-                            navigation.navigate('GroceryList', {listName: listName} )
+                            navigation.navigate('GroceryList', {listName: item.listName, id: item.id} )
                           }
                     >
                         <Image style={styles.listIcon} source={BillIcon} />

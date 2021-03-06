@@ -8,14 +8,16 @@ import Logo from "../assets/Logo.png";
 import LeftArrow from "../assets/left-arrow.png";
 import Document from "../assets/Document.png";
 
-export default function GroceryListSplitBill({ navigation }) {
+export default function GroceryListSplitBill({ navigation, route }) {
   let currentUserUID = firebase.auth().currentUser.uid;
   const [firstName, setFirstName] = useState("Amanda");
+  const [tempListName] = useState(route.params.listName);
+  const [listID] = useState(route.params.id);
 
   const [totalPrice, setTotalPrice] = useState(0);
   // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
-  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
-  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection").orderBy('createdAt');
+  const ref = firebase.firestore().collection( `groceryList/${listID}/itemCollection`);
+  const query = firebase.firestore().collection(`groceryList/${listID}/itemCollection`).orderBy('createdAt');
 
   const [groceryItemName, setGroceryItemName] = useState("");
 
@@ -46,7 +48,7 @@ export default function GroceryListSplitBill({ navigation }) {
       let doc = await firebase
         .firestore()
         .collection("groceryList")
-        .doc("UMa1GQigE73aEWGC9dUM")
+        .doc(route.params.id)
         .get();
 
       // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
@@ -69,6 +71,7 @@ export default function GroceryListSplitBill({ navigation }) {
           quantity,
           addedBy,
           createdAt,
+          parentList: route.params.id,
         });
       });
 
@@ -84,7 +87,7 @@ export default function GroceryListSplitBill({ navigation }) {
     await firebase
       .firestore()
       .collection("groceryList")
-      .doc("UMa1GQigE73aEWGC9dUM")
+      .doc(route.params.id)
       .update({
         totalPrice: Number(totalPrice.replace(/[^0-9]/g, '')),
       })
@@ -96,7 +99,7 @@ export default function GroceryListSplitBill({ navigation }) {
           .get()
           .then((querySnapshot) => {
             querySnapshot.forEach(async (doc) => {
-              const userCollectionRef = firebase.firestore().collection('groceryList').doc("UMa1GQigE73aEWGC9dUM")
+              const userCollectionRef = firebase.firestore().collection('groceryList').doc(route.params.id)
 
               userCollectionRef.update({
                 oweAmount: totalPrice / doc.numOfUsers,
@@ -115,7 +118,7 @@ export default function GroceryListSplitBill({ navigation }) {
   }
 
   const payNow = () => {
-    navigation.replace("GroceryList");
+    navigation.replace("GroceryList", {listName: tempListName, id: route.params.id});
   };
 
   //UPDATE LIST NAME:
@@ -123,14 +126,14 @@ export default function GroceryListSplitBill({ navigation }) {
     await firebase
       .firestore()
       .collection("groceryList")
-      .doc("UMa1GQigE73aEWGC9dUM")
+      .doc(route.params.id)
       .update({
         groceryListName: groceryItemName,
       });
   }
 
   const handleDashboard = () => {
-    navigation.replace("GroceryList");
+    navigation.replace("GroceryList", {listName: tempListName, id: route.params.id});
   };
 
   if (loading) {
@@ -152,7 +155,7 @@ export default function GroceryListSplitBill({ navigation }) {
         onChangeText={updateName}
         style={styles.title}
       >
-        <Text style={styles.h1} >{groceryItemName}</Text>
+        <Text style={styles.h1} >{route.params.listName}</Text>
       </Input>
 
       <TouchableOpacity

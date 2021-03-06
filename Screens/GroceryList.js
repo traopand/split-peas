@@ -19,11 +19,14 @@ import LeftArrow from "../assets/left-arrow.png";
 export default function GroceryList({ navigation, route}) {
   let currentUserUID = firebase.auth().currentUser.uid;
   const [firstName, setFirstName] = useState("Amanda");
+  const [tempListName] = useState(route.params.listName);
+  
+  const [listID, setListID] = useState(route.params.id);
 
   const [groceryItem, setGroceryItem] = useState("");
   // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
-  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
-  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection").orderBy('createdAt');
+
+const query= firebase.firestore().collection(`groceryList/${listID}/itemCollection`).orderBy('createdAt')
 
   const [groceryItemName, setGroceryItemName] = useState("");
 
@@ -54,18 +57,20 @@ export default function GroceryList({ navigation, route}) {
       let doc = await firebase
         .firestore()
         .collection("groceryList")
-        .where( "listName", "==", route.params.listName )
-        // .doc("UMa1GQigE73aEWGC9dUM")
-        .get();
-       
-      // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
-      if (!doc.exists) {
-        Alert.alert("No grocery list name found!");
-      } else {
-        let dataObj = doc.data();
-        // console.log(dataObj);
-        setGroceryItemName(dataObj.listName);
-      }
+        .doc(route.params.id)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach(async (doc) => {
+
+            // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
+          if (!doc.exists) {
+            Alert.alert("No grocery list name found!");
+          } else {
+            setGroceryItemName(doc.data().listName);
+            // setListID(doc.data().id);
+          }
+          });
+        });
     }
     getGroupInfo();
 
@@ -73,7 +78,7 @@ export default function GroceryList({ navigation, route}) {
     async function updateName() {
       await firebase
         .firestore()
-        .collection("groceryList/UMa1GQigE73aEWGC9dUM")
+        .collection(`groceryList/${route.params.id}`)
         .doc(id)
         .update({
           groceryListName: groceryItemName,
@@ -91,6 +96,7 @@ export default function GroceryList({ navigation, route}) {
           quantity,
           addedBy,
           createdAt,
+          parentList: route.params.id,
         });
       });
 
@@ -103,11 +109,13 @@ export default function GroceryList({ navigation, route}) {
   }, []);
 
   async function addGroceryItem() {
+    const ref = firebase.firestore().collection(`groceryList/${listID}/itemCollection`);
     await ref.add({
       itemName: groceryItem,
       quantity: 0,
       addedBy: firstName,
       createdAt: firebase.firestore.Timestamp.fromDate(new Date()).toDate(),
+      parentList: route.params.id,
     });
     setGroceryItem("");
     Keyboard.dismiss();
@@ -118,7 +126,7 @@ export default function GroceryList({ navigation, route}) {
     await firebase
       .firestore()
       .collection("groceryList")
-      .doc("UMa1GQigE73aEWGC9dUM")
+      .doc(route.params.id)
       .update({
         groceryListName: groceryItemName,
       });
@@ -129,10 +137,9 @@ export default function GroceryList({ navigation, route}) {
   };
 
   const gotoClaimItems = () => {
-    navigation.replace("GroceryListSplitBill");
+    navigation.replace("GroceryListSplitBill", {listName: tempListName, id: route.params.id});
   };
   
-
   if (loading) {
     return null; // or a spinner
   }
@@ -152,7 +159,7 @@ export default function GroceryList({ navigation, route}) {
         onChangeText={updateName}
         style={styles.title}
       >
-        <Text style={styles.h1} >{groceryItemName}</Text>
+        <Text style={styles.h1} >{route.params.listName}</Text>
       </Input>
 
       <TouchableOpacity
@@ -178,6 +185,7 @@ export default function GroceryList({ navigation, route}) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <GroceryItem {...item} />}
       />
+
       <TextInput
         label={"New Item"}
         value={groceryItem}

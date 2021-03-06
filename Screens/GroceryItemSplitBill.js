@@ -3,12 +3,12 @@ import * as firebase from "firebase";
 import { List } from 'react-native-paper';
 import { StyleSheet, Text, View } from 'react-native';
 
-function GroceryItemSplitBill({ id, itemName, quantity, addedBy }) {
-  const [colourCode, setColourCode] = useState('');
+function GroceryItemSplitBill({ id, itemName, quantity, addedBy, parentList }) {
+  const [colourCode, setColourCode] = useState('#B4B7FF');
 
   async function updateInfo() {
     await firebase.firestore()
-      .collection('groceryList/UMa1GQigE73aEWGC9dUM/itemCollection')
+      .collection(`groceryList/${parentList}/itemCollection`)
       .doc(id)
       .update({
         quantity: firebase.firestore.FieldValue.increment(1),
