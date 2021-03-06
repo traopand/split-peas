@@ -11,7 +11,6 @@ import {
   Keyboard,
   FlatList,
 } from "react-native";
-import { List } from 'react-native-paper';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import * as firebase from "firebase";
 import { Input } from "react-native-elements";
@@ -19,15 +18,13 @@ import Logo from "../assets/Logo.png";
 import LeftArrow from "../assets/left-arrow.png";
 import Rectangle from "../assets/Rectangle.png";
 import BillIcon from "../assets/BillIcon.png";
-import GroceryIcon from "../assets/groceryIcon.png";
-import AddMember from "../assets/AddMember.png";
 import Member1 from "../assets/Member1.png";
 import Member2 from "../assets/Member2.png";
 import Member3 from "../assets/Member3.png";
 import Member4 from "../assets/Member4.png";
 import Member5 from "../assets/Member5.png";
 import Member6 from "../assets/Member6.png";
-import MyLists from "./MyLists";
+
 
 export default function Dashboard({ navigation }) {
   let currentUserUID = firebase.auth().currentUser.uid;
@@ -37,8 +34,11 @@ export default function Dashboard({ navigation }) {
   const [listMembers, setListMembers] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const [groceryList, setGroceryList] = useState([]);
+  const query = firebase.firestore().collection("groceryList").orderBy('createdAt');
+
   // TUTORIAL GROUP CREATOR //
-  const [group, setGroup] = useState("");
+  const [groupID, setGroupID] = useState("");
 
   const [listName, setListName] = useState("");
   const [infoVisible, setInfoVisible] = useState(false);
@@ -58,12 +58,49 @@ export default function Dashboard({ navigation }) {
       } else {
         let dataObj = doc.data();
         setFirstName(dataObj.firstName);
+        setGroupID(dataObj.groupID);
       }
     }
     getUserInfo();
 
+    return query.onSnapshot((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+          const { listName } = doc.data();
+          list.push({
+              id: doc.id,
+              listName,
+          });
+      });
+
+      setGroceryList(list);
+  });
 
   });
+
+  async function setBillTotal() {
+    await firebase
+      .firestore()
+      .collection("group")
+      .where('id', '==', groupID)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach(async (doc) => {
+          const userCollectionRef = firebase.firestore().collection(`group/${groupID}/groceryList`).get();
+
+          userCollectionRef.update({
+            oweAmount: totalPrice / doc.numOfUsers,
+          })
+
+          setAmountOwed(totalPrice / doc.data().numOfUsers);
+
+          // await userCollectionRef.add({
+          //     userId: currentUserUID,
+          // });
+        });
+      })
+}
+
 
   const gotoHomepage = () => {
     navigation.replace("Homepage");
@@ -96,7 +133,7 @@ export default function Dashboard({ navigation }) {
         <Image style={styles.logo} source={Logo} />
 
         <Text style={styles.h1}>Ravenous Raccoons</Text>
-        <Text style={styles.nameText}>Hi {firstName}</Text>
+        <Text style={styles.listNameText}>Hi {firstName}</Text>
         <Modal
           animationType="slide"
           transparent={true}
@@ -191,14 +228,32 @@ export default function Dashboard({ navigation }) {
           <Text style={styles.listText}>My Lists</Text>
             <TouchableOpacity
               style={styles.plusButton}
-              // onPress={() => setCreateGroupVisible(true)}
-              onPress={() => navigation.navigate("GroceryList")}
+              onPress={() => setCreateGroupVisible(true)}
+              // onPress={() => navigation.navigate("GroceryList")}
             >
               <Text style={styles.buttonText}>+</Text>
             </TouchableOpacity>
         </View>
         
-      <MyLists />
+        <FlatList
+            contentContainerStyle={styles.listContainer}
+            data={groceryList}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => {
+                return (
+                    <TouchableOpacity
+                        style={styles.listButton}
+                        onPress={() =>
+                            navigation.navigate('GroceryList')
+                          }
+                    >
+                        <Image style={styles.listIcon} source={BillIcon} />
+                        <Text style={styles.listNameText}>{item.listName}</Text>
+                    </TouchableOpacity>
+                )
+            }}
+        />
+  
 
       </View>
     </>
@@ -212,6 +267,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  listContainer: {
+    alignSelf: "center",
+},
 
   // header peice
   backButtonContainer: {
@@ -236,11 +294,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#E1EFD6",
     width: "70%",
     height: "28%",
-    marginTop: 5,
+    marginTop: -700,
     marginBottom: -10,
-    paddingTop: 0,
     justifyContent: "center",
-    alignContent: "center",
   },
 
   textInput: {
@@ -296,6 +352,13 @@ const styles = StyleSheet.create({
     color: "#5C7F7B",
     paddingBottom: 20,
   },
+
+  listNameText: {
+    flex: 11,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: "#000000",
+},
 
   listText: {
     fontSize: 28,
@@ -376,4 +439,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+
+  // list styles
+
+listNameText: {
+    flex: 11,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: "#000000",
+},
+
+listIcon:{
+    flex: 1,
+    marginLeft: 20,
+    marginRight: 30,
+    width: 10,
+    height: 26,
+},
+listButton: {
+    flexDirection: 'row',
+    backgroundColor: "#E1EFD6",
+    marginTop: 15,
+    width: 300,
+    height: 50,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+},
 });

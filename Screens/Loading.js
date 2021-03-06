@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import * as firebase from "firebase";
 
 export default function Loading({ navigation }) {
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        navigation.replace("GroceryListSplitBill");
+        navigation.replace("Homepage");
       } else {
         navigation.replace("Login");
       }

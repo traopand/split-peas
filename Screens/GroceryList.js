@@ -22,8 +22,8 @@ export default function GroceryList({ navigation, route}) {
 
   const [groceryItem, setGroceryItem] = useState("");
   // const groupRef = firebase.firestore().collection("group/Rodaxem1mzuhpqAOq25u");
-  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM1/itemCollection");
-  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM1/itemCollection").orderBy('createdAt');
+  const ref = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection");
+  const query = firebase.firestore().collection("groceryList/UMa1GQigE73aEWGC9dUM/itemCollection").orderBy('createdAt');
 
   const [groceryItemName, setGroceryItemName] = useState("");
 
