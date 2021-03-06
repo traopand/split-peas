@@ -54,15 +54,17 @@ export default function GroceryList({ navigation, route}) {
       let doc = await firebase
         .firestore()
         .collection("groceryList")
-        .doc("UMa1GQigE73aEWGC9dUM")
+        .where( "listName", "==", route.params.listName )
+        // .doc("UMa1GQigE73aEWGC9dUM")
         .get();
-
+       
       // THE GROCERY LIST ID IS CURRENTLY HARDED CODED^^
       if (!doc.exists) {
         Alert.alert("No grocery list name found!");
       } else {
         let dataObj = doc.data();
-        setGroceryItemName(dataObj.groceryListName);
+        // console.log(dataObj);
+        setGroceryItemName(dataObj.listName);
       }
     }
     getGroupInfo();

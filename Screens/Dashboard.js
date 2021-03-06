@@ -71,6 +71,7 @@ export default function Dashboard({ navigation }) {
               id: doc.id,
               listName,
           });
+          setListName(listName);
       });
 
       setGroceryList(list);
@@ -229,7 +230,6 @@ export default function Dashboard({ navigation }) {
             <TouchableOpacity
               style={styles.plusButton}
               onPress={() => setCreateGroupVisible(true)}
-              // onPress={() => navigation.navigate("GroceryList")}
             >
               <Text style={styles.buttonText}>+</Text>
             </TouchableOpacity>
@@ -244,7 +244,7 @@ export default function Dashboard({ navigation }) {
                     <TouchableOpacity
                         style={styles.listButton}
                         onPress={() =>
-                            navigation.navigate('GroceryList')
+                            navigation.navigate('GroceryList', {listName: listName} )
                           }
                     >
                         <Image style={styles.listIcon} source={BillIcon} />
