@@ -7,6 +7,8 @@ Demo Video: https://www.youtube.com/watch?v=KXNlwwRgAI4
 Try it out on your phone by downloading the Expo mobile app: https://expo.io/@amandayu/split-peas
 
 # Business Plan
+Figma: https://www.figma.com/file/dimz5SdZll9x8IQ9DBINq1/split-peas-designs?node-id=0%3A1
+<br>
 Pitch Deck: https://docs.google.com/presentation/d/1_SsJK6paYJRlZbnljKIkreJ_EXTg8JFKWTSoSq0mq64/edit?usp=sharing
 <br>
 Project Proposal : https://docs.google.com/document/d/1ohipDeBTYNHZhVBNlKyHhUMzMX1ufua8r-hqeNHhyTo/edit?usp=sharing
@@ -16,5 +18,6 @@ SplitPeas by Techgeese is a mobile app designed to keep track of alternating gro
 
 # Technologies Used
 <li>React Native</li>
-<li>Firebase Database</li>
-
+<li>Firebase Realtime Database</li>
+<li>Firebase Authentication/li>
+<li>Figma</li>
