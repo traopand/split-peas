@@ -13,6 +13,6 @@ Project Proposal : https://docs.google.com/document/d/1ohipDeBTYNHZhVBNlKyHhUMzM
 SplitPeas by Techgeese is a mobile app designed to keep track of alternating grocery trips and bill splitting within a group called a pod. Designed for university students on a tight budget and schedule, SplitPeas aims to offer convenience in group grocery shopping, promote healthy eating through accountability, and ultimately, save time and money.
 
 # Technologies Used
-React Native
-Firebase Database
+<li>React Native</li>
+<li>Firebase Database</li>
 
